@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 230 158" role="img" aria-label="Kushagra">
+  <title>Kushagra</title>
+  <!-- K mark: red letterform with a dashed stitch line sewn down the stem -->
+  <g transform="translate(58,-2) scale(0.85)">
+    <path fill="#E63339" d="M 0 10 H 32 V 130 H 0 Z M 30 52 L 134 10 V 38 L 30 82 Z M 30 88 L 30 58 L 134 102 L 134 130 Z"/>
+    <line x1="16" y1="30" x2="16" y2="110" stroke="#F28C3C" stroke-width="5" stroke-dasharray="9 7" stroke-linecap="butt"/>
+  </g>
+  <!-- Wordmark, Gill Sans style -->
+  <text x="118" y="142" text-anchor="middle" fill="#1B2433" font-family="'Gill Sans','Gill Sans MT',Calibri,Candara,'Segoe UI',Optima,Arial,sans-serif" font-size="28" font-weight="500" letter-spacing="5.5">KUSHAGRA</text>
+</svg>

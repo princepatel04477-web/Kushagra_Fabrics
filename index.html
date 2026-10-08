@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kushagra™ — Premium unstitched fabric gifts for men</title>
+  <meta name="description" content="Kushagra boxes premium unstitched shirting and suiting for the men you love. You select the fabric, he has it stitched, he stands out.">
+  <meta name="theme-color" content="#EEF1F4">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cabin:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============ tokens ============ */
+    :root {
+      --shirting: #EEF1F4;
+      --paper: #F7F8FA;
+      --suiting: #1B2433;
+      --red: #E63339;
+      --thread: #F28C3C;
+      --chalk: #6F7884;
+      --line: rgba(27, 36, 51, 0.14);
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --radius-s: 6px;
+      --radius-m: 14px;
+      --radius-pill: 999px;
+      --font-head: "Bodoni Moda", "Times New Roman", serif;
+      --font-body: "Cabin", system-ui, sans-serif;
+      --nav-h: 60px;
+    }
+
+    /* ============ base ============ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-padding-top: 110px; }
+
+    body {
+      background: var(--shirting);
+      color: var(--suiting);
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    body.is-loading,
+    body.is-locked { overflow: hidden; height: 100vh; }
+
+    img, svg { display: block; max-width: 100%; }
+
+    a { color: inherit; }
+
+    h1, h2, h3 {
+      font-family: var(--font-head);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.02;
+    }
+
+    h1 { font-size: clamp(3rem, 8vw, 7.5rem); }
+    h2 { font-size: clamp(2.25rem, 5vw, 4.5rem); }
+    h3 { font-size: 1.75rem; line-height: 1.15; }
+
+    p { max-width: 62ch; }
+    small { font-size: 0.875rem; }
+    .tnum { font-variant-numeric: tabular-nums; }
+
+    ::selection { background: var(--suiting); color: var(--shirting); }
+
+    :focus-visible {
+      outline: 2px solid var(--suiting);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 500;
+      padding: 10px 18px;
+      background: var(--suiting);
+      color: var(--shirting);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      border-radius: var(--radius-pill);
+      transform: translateY(-200%);
+      transition: transform 0.3s var(--ease);
+    }
+    .skip-link:focus-visible { transform: translateY(0); }
+
+    /* ============ layout ============ */
+    .wrap {
+      width: min(1320px, 100%);
+      margin-inline: auto;
+      padding-inline: clamp(20px, 5vw, 64px);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      column-gap: clamp(16px, 2vw, 28px);
+    }
+
+    .section {
+      position: relative;
+      padding-block: clamp(96px, 14vw, 180px);
+    }
+
+    .section--dark {
+      background: var(--suiting);
+      color: var(--shirting);
+    }
+    .section--dark .lede { color: rgba(238, 241, 244, 0.72); }
+    .section--dark .sec-index { color: rgba(238, 241, 244, 0.45); }
+    .section--dark :focus-visible { outline-color: var(--shirting); }
+
+    /* folded-cloth, off-centre placements */
+    .place-a { grid-column: 2 / 9; }
+    .place-b { grid-column: 3 / 10; }
+    .place-c { grid-column: 4 / 11; }
+
+    /* ============ section heads ============ */
+    .sec-index {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--chalk);
+      margin-bottom: 18px;
+    }
+
+    .lede {
+      margin-top: 22px;
+      color: var(--chalk);
+      max-width: 62ch;
+    }
+
+    .sec-head::after {
+      content: "";
+      display: block;
+      width: 104px;
+      height: 0;
+      border-top: 2px dashed var(--thread);
+      margin-top: 30px;
+    }
+
+    /* ============ shared bits ============ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 24px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.35s var(--ease), background-color 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease);
+    }
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn--red { background: var(--red); color: #FFFFFF; }
+    .btn--red:hover { background: #D4282E; }
+
+    .btn--dark { background: var(--suiting); color: var(--shirting); }
+    .btn--dark:hover { background: #101722; }
+
+    .text-link {
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--suiting);
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 3px;
+      transition: border-color 0.3s var(--ease);
+    }
+    .text-link:hover { border-color: var(--suiting); }
+
+    .spark { color: var(--thread); }
+
+    /* ============ preloader ============ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--shirting);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      will-change: transform;
+    }
+    .pl-stitch { color: var(--thread); }
+    .pl-mask-path { stroke-dashoffset: 1; }
+    .pl-logo {
+      height: 128px;
+      width: auto;
+      opacity: 0;
+      transform: scale(0.96);
+      transform-origin: 50% 60%;
+    }
+
+    /* ============ navigation ============ */
+    .nav {
+      position: fixed;
+      top: 20px;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: center;
+      padding-inline: 12px;
+      pointer-events: none;
+      transition: transform 0.55s var(--ease);
+    }
+    .nav.is-hidden { transform: translateY(calc(-100% - 30px)); }
+
+    .nav-bar {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.6vw, 26px);
+      padding: 8px 8px 8px 16px;
+      background: rgba(247, 248, 250, 0.85);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-pill);
+      transition: padding 0.4s var(--ease);
+    }
+    .nav-bar.is-compact { padding: 5px 6px 5px 12px; }
+    .nav-bar.is-compact .nav-logo-img { height: 31px; }
+
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+    .nav-logo-img { height: 36px; width: auto; transition: height 0.4s var(--ease); }
+
+    .nav-links {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .nav-pill {
+      position: absolute;
+      top: 3px;
+      bottom: 3px;
+      left: 0;
+      width: 0;
+      background: var(--suiting);
+      border-radius: var(--radius-pill);
+      opacity: 0;
+      z-index: 0;
+    }
+
+    .nav-link {
+      position: relative;
+      z-index: 1;
+      padding: 9px 16px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--suiting);
+      text-decoration: none;
+      transition: color 0.3s var(--ease);
+    }
+    .nav-link:hover,
+    .nav-link.is-active { color: var(--shirting); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bag-btn,
+    .menu-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-pill);
+      color: var(--suiting);
+      cursor: pointer;
+      transition: border-color 0.3s var(--ease), background-color 0.3s var(--ease);
+    }
+    .bag-btn:hover,
+    .menu-btn:hover { border-color: var(--suiting); }
+
+    .bag-count {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--red);
+      color: #FFFFFF;
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      border-radius: var(--radius-pill);
+    }
+    .bag-count[hidden] { display: none; }
+
+    .nav-cta { padding: 12px 20px; font-size: 0.9rem; white-space: nowrap; }
+
+    /* two-line menu icon, morphs to close X */
+    .menu-btn { display: none; }
+    .menu-line {
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: transform 0.45s var(--ease);
+    }
+    .menu-btn.is-open .menu-line--1 { transform: translateY(2.5px) rotate(45deg); }
+    .menu-btn.is-open .menu-line--2 { transform: translateY(-2.5px) rotate(-45deg); }
+
+    /* ============ mobile staggered menu ============ */
+    .menu {
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .menu.is-open { visibility: visible; pointer-events: auto; }
+
+    .menu-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+    .menu-panel--suiting { width: 100vw; background: var(--suiting); z-index: 1; }
+    .menu-panel--chalk   { width: calc(100vw - 22px); background: var(--chalk); z-index: 2; }
+    .menu-panel--paper   { width: calc(100vw - 44px); background: var(--paper); z-index: 3; }
+
+    .menu-inner {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 110px clamp(30px, 9vw, 72px) 56px;
+    }
+
+    .menu-links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      list-style: none;
+    }
+
+    .menu-link {
+      display: inline-block;
+      padding: 6px 0;
+      font-family: var(--font-head);
+      font-size: 2.5rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--suiting);
+      text-decoration: none;
+    }
+
+    .menu-foot {
+      margin-top: 44px;
+      color: var(--chalk);
+      font-size: 0.875rem;
+    }
+
+    /* ============ hero ============ */
+    .hero {
+      padding-top: clamp(140px, 18vw, 220px);
+      padding-bottom: clamp(96px, 14vw, 180px);
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+    }
+    .hero-grid { width: 100%; row-gap: clamp(40px, 6vw, 80px); align-items: end; }
+
+    .hero-text { grid-column: 2 / 9; }
+    .hero-art-wrap {
+      grid-column: 9 / 13;
+      position: relative;
+      padding-bottom: 8px;
+    }
+    .hero-art { width: 100%; height: auto; }
+
+    .hero-tag {
+      margin-top: 28px;
+      font-family: var(--font-body);
+      font-size: 1.02rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      color: var(--suiting);
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      margin-top: 38px;
+    }
+
+    .hero-caption {
+      margin-top: 26px;
+      font-size: 0.875rem;
+      color: var(--chalk);
+    }
+
+    .hero-spark {
+      position: absolute;
+      top: -6px;
+      right: 8px;
+    }
+
+    /* ============ footer ============ */
+    .footer {
+      border-top: 1px solid var(--line);
+      padding-block: clamp(72px, 10vw, 120px) 40px;
+    }
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(48px, 6vw, 80px);
+    }
+    .footer-mark { height: 76px; width: auto; }
+    .footer-row {
+      width: 100%;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--chalk);
+      flex-wrap: wrap;
+    }
+
+    /* ============ responsive ============ */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .menu-btn { display: inline-flex; }
+      .nav-cta { padding: 11px 16px; }
+
+      .place-a, .place-b, .place-c { grid-column: 1 / 13; }
+      .hero-text { grid-column: 1 / 13; }
+      .hero-art-wrap { grid-column: 1 / 11; }
+    }
+
+    @media (max-width: 560px) {
+      .hero-actions { flex-direction: column; align-items: flex-start; gap: 18px; }
+      .footer-row { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+    }
+
+    /* ============ reduced motion ============ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+      .btn:hover { transform: none; }
+    }
+  </style>
+  <noscript>
+    <style>
+      #preloader { display: none; }
+      body.is-loading { overflow: auto; height: auto; }
+    </style>
+  </noscript>
+</head>
+<body class="is-loading">
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Preloader -->
+  <div id="preloader" aria-hidden="true">
+    <svg class="pl-stitch" width="24" height="64" viewBox="0 0 24 64" fill="none" aria-hidden="true">
+      <defs>
+        <mask id="pl-stitch-mask" maskUnits="userSpaceOnUse" x="-5" y="-5" width="34" height="74">
+          <path class="pl-mask-path" d="M12 2 V62" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+        </mask>
+      </defs>
+      <path d="M12 2 V62" stroke="#F28C3C" stroke-width="3.5" stroke-dasharray="6 5" mask="url(#pl-stitch-mask)"/>
+    </svg>
+    <!-- logo.svg: red K with the dashed orange stitch in its stem, KUSHAGRA wordmark below -->
+    <img class="pl-logo" src="logo.svg" alt="Kushagra" width="188" height="128">
+  </div>
+
+  <!-- Navigation -->
+  <header class="nav" id="nav">
+    <div class="nav-bar" id="nav-bar">
+      <a class="nav-logo" href="#hero" aria-label="Kushagra, back to top">
+        <img class="nav-logo-img" src="logo.svg" alt="Kushagra™" width="53" height="36">
+      </a>
+
+      <nav class="nav-links" id="nav-links" aria-label="Primary">
+        <span class="nav-pill" id="nav-pill" aria-hidden="true"></span>
+        <a class="nav-link" href="#occasions">Occasions</a>
+        <a class="nav-link" href="#fabrics">Fabrics</a>
+        <a class="nav-link" href="#boxes">Boxes</a>
+        <a class="nav-link" href="#corporate">Corporate</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="bag-btn" id="bag-btn" type="button" aria-label="Bag, 0 items">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 8h14l-1.2 12.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z"/>
+            <path d="M8.5 8V6.5a3.5 3.5 0 0 1 7 0V8"/>
+          </svg>
+          <span class="bag-count tnum" id="bag-count" hidden>0</span>
+        </button>
+        <a class="btn btn--red nav-cta" href="#builder">Build a gift</a>
+        <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <line class="menu-line menu-line--1" x1="5" y1="9.5" x2="19" y2="9.5"/>
+            <line class="menu-line menu-line--2" x1="5" y1="14.5" x2="19" y2="14.5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile staggered menu -->
+  <div class="menu" id="mobile-menu" aria-hidden="true">
+    <div class="menu-panel menu-panel--suiting"></div>
+    <div class="menu-panel menu-panel--chalk"></div>
+    <div class="menu-panel menu-panel--paper"></div>
+    <div class="menu-inner">
+      <ul class="menu-links">
+        <li><a class="menu-link" href="#occasions">Occasions</a></li>
+        <li><a class="menu-link" href="#fabrics">Fabrics</a></li>
+        <li><a class="menu-link" href="#boxes">Boxes</a></li>
+        <li><a class="menu-link" href="#builder">Build the gift</a></li>
+        <li><a class="menu-link" href="#how">How it works</a></li>
+        <li><a class="menu-link" href="#corporate">Corporate</a></li>
+      </ul>
+      <p class="menu-foot">Select • Stitch • Stand Out</p>
+    </div>
+  </div>
+
+  <main id="main" tabindex="-1">
+
+    <!-- Hero -->
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <div class="wrap grid hero-grid">
+        <div class="hero-text" id="hero-text">
+          <h1 id="hero-title">Give him cloth worth cutting.</h1>
+          <p class="hero-tag">Select • Stitch • Stand Out</p>
+          <p class="lede">Kushagra boxes premium unstitched shirting and suiting for men with a tailor they trust. You pick the fabric, he picks the cut, and the room notices both.</p>
+          <div class="hero-actions">
+            <a class="btn btn--dark" href="#boxes">Choose his box</a>
+            <a class="text-link" href="#how">How it works</a>
+          </div>
+          <p class="hero-caption tnum">Box 02 · two shirt lengths · 2.4 m</p>
+        </div>
+        <div class="hero-art-wrap" id="hero-art-wrap">
+          <svg class="hero-spark spark" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+            <path d="M6 0c.4 3.2 2.8 5.6 6 6-3.2.4-5.6 2.8-6 6-.4-3.2-2.8-5.6-6-6 3.2-.4 5.6-2.8 6-6Z" fill="currentColor"/>
+          </svg>
+          <svg class="hero-art" viewBox="0 0 360 280" role="img" aria-label="A Kushagra gift box, folded cloth inside, tied with a red ribbon">
+            <!-- folded cloth peeking out of the box -->
+            <path d="M46 92 Q 78 50 116 84 Q 148 42 190 82 Q 232 42 268 84 Q 302 50 330 92 L 330 112 L 46 112 Z"
+                  fill="#F7F8FA" stroke="#1B2433" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M78 84 Q 116 66 150 88" fill="none" stroke="#1B2433" stroke-width="1.4" opacity="0.5"/>
+            <path d="M212 88 Q 252 66 292 86" fill="none" stroke="#1B2433" stroke-width="1.4" opacity="0.5"/>
+            <!-- box -->
+            <rect x="40" y="104" width="296" height="150" rx="8" fill="#F7F8FA" stroke="#1B2433" stroke-width="2"/>
+            <line x1="40" y1="132" x2="336" y2="132" stroke="#1B2433" stroke-width="1.5"/>
+            <!-- gift ribbon -->
+            <rect x="166" y="104" width="44" height="150" fill="#E63339"/>
+            <rect x="40" y="182" width="296" height="36" fill="#E63339"/>
+            <!-- bow -->
+            <path d="M188 200 L 152 182 Q 142 190 148 204 Q 156 214 188 200 Z" fill="#E63339"/>
+            <path d="M188 200 L 224 182 Q 234 190 228 204 Q 220 214 188 200 Z" fill="#E63339"/>
+            <circle cx="188" cy="200" r="8" fill="#E63339"/>
+            <!-- stitched edges -->
+            <line x1="48" y1="189" x2="328" y2="189" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
+            <line x1="48" y1="211" x2="328" y2="211" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
+            <line x1="173" y1="112" x2="173" y2="176" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
+            <line x1="203" y1="112" x2="203" y2="176" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
+            <line x1="173" y1="226" x2="173" y2="248" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
+            <line x1="203" y1="226" x2="203" y2="248" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
+            <!-- measurement ticks -->
+            <line x1="40" y1="268" x2="336" y2="268" stroke="#6F7884" stroke-width="1" opacity="0.55"/>
+            <line x1="40" y1="262" x2="40" y2="274" stroke="#6F7884" stroke-width="1" opacity="0.55"/>
+            <line x1="188" y1="262" x2="188" y2="274" stroke="#6F7884" stroke-width="1" opacity="0.55"/>
+            <line x1="336" y1="262" x2="336" y2="274" stroke="#6F7884" stroke-width="1" opacity="0.55"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01 Occasions -->
+    <section class="section" id="occasions" aria-labelledby="occasions-title">
+      <div class="wrap grid">
+        <header class="sec-head place-a">
+          <span class="sec-index tnum">01</span>
+          <h2 id="occasions-title">Pick the occasion</h2>
+          <p class="lede">Raksha Bandhan, weddings, Diwali, anniversaries, and the team that shipped the impossible — every moment has a weight, and a fabric to match.</p>
+        </header>
+      </div>
+    </section>
+
+    <!-- 02 Fabrics -->
+    <section class="section" id="fabrics" aria-labelledby="fabrics-title">
+      <div class="wrap grid">
+        <header class="sec-head place-b">
+          <span class="sec-index tnum">02</span>
+          <h2 id="fabrics-title">Feel the fabric</h2>
+          <p class="lede">Two-ply cottons, open-weave linens, and winter wools, each with the count, the weight, and the drape written in plain numbers.</p>
+        </header>
+      </div>
+    </section>
+
+    <!-- 03 Boxes -->
+    <section class="section" id="boxes" aria-labelledby="boxes-title">
+      <div class="wrap grid">
+        <header class="sec-head place-a">
+          <span class="sec-index tnum">03</span>
+          <h2 id="boxes-title">Choose his box</h2>
+          <p class="lede">Three sizes, from one shirt-length to a full suit-length, lined in soft paper and closed with the red Kushagra ribbon.</p>
+        </header>
+      </div>
+    </section>
+
+    <!-- 04 Builder -->
+    <section class="section" id="builder" aria-labelledby="builder-title">
+      <div class="wrap grid">
+        <header class="sec-head place-c">
+          <span class="sec-index tnum">04</span>
+          <h2 id="builder-title">Build the gift</h2>
+          <p class="lede">Pick the cloth, the box, the note, and the monogram — four calm steps, no guesswork.</p>
+        </header>
+      </div>
+    </section>
+
+    <!-- 05 How it works -->
+    <section class="section" id="how" aria-labelledby="how-title">
+      <div class="wrap grid">
+        <header class="sec-head place-a">
+          <span class="sec-index tnum">05</span>
+          <h2 id="how-title">How it works</h2>
+          <p class="lede">Select the fabric, hand him the box, and let his tailor do what tailors do — he stands out, and you get the credit.</p>
+        </header>
+      </div>
+    </section>
+
+    <!-- 06 What he made of it -->
+    <section class="section section--dark" id="made" aria-labelledby="made-title">
+      <div class="wrap grid">
+        <header class="sec-head place-b">
+          <span class="sec-index tnum">06</span>
+          <h2 id="made-title">What he made of it</h2>
+          <p class="lede">Real shirts, bandhgalas, and three-piece suits that began as a box from you and one visit to his tailor.</p>
+        </header>
+      </div>
+    </section>
+
+    <!-- 07 Corporate -->
+    <section class="section" id="corporate" aria-labelledby="corporate-title">
+      <div class="wrap grid">
+        <header class="sec-head place-a">
+          <span class="sec-index tnum">07</span>
+          <h2 id="corporate-title">Gifting for teams</h2>
+          <p class="lede">Bulk boxes for the people who build your company — your note inside, our cloth in hand, his tailor on speed dial.</p>
+        </header>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <img class="footer-mark" src="logo.svg" alt="Kushagra™" width="111" height="76">
+      <div class="footer-row">
+        <small class="tnum">© 2026 Kushagra™</small>
+        <small>Select • Stitch • Stand Out</small>
+        <small>Unstitched, on purpose.</small>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var EASE_FACTOR = { x1: 0.22, y1: 1, x2: 0.36, y2: 1 };
+
+      /* if the animation CDN is unreachable, never trap the page behind the preloader */
+      if (typeof gsap === "undefined") {
+        var plFallback = document.getElementById("preloader");
+        if (plFallback) plFallback.remove();
+        document.body.classList.remove("is-loading");
+        return;
+      }
+
+      /* cubic-bezier(0.22, 1, 0.36, 1) as a GSAP-compatible ease function */
+      function cubicBezier(x1, y1, x2, y2) {
+        function calc(t, a, b) {
+          var A = 1 - 3 * b + 3 * a, B = 3 * b - 6 * a, C = 3 * a;
+          return ((A * t + B) * t + C) * t;
+        }
+        function slope(t, a, b) {
+          var A = 1 - 3 * b + 3 * a, B = 3 * b - 6 * a, C = 3 * a;
+          return 3 * A * t * t + 2 * B * t + C;
+        }
+        return function (x) {
+          var t = x, i, s, e;
+          for (i = 0; i < 8; i++) {
+            s = slope(t, x1, x2);
+            if (!s) break;
+            e = calc(t, x1, x2) - x;
+            t -= e / s;
+          }
+          return calc(t, y1, y2);
+        };
+      }
+      var EASE = cubicBezier(EASE_FACTOR.x1, EASE_FACTOR.y1, EASE_FACTOR.x2, EASE_FACTOR.y2);
+
+      var hasScrollTrigger = typeof ScrollTrigger !== "undefined";
+      if (hasScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+      gsap.defaults({ ease: EASE });
+
+      var body = document.body;
+      var nav = document.getElementById("nav");
+      var navBar = document.getElementById("nav-bar");
+      var navLinksWrap = document.getElementById("nav-links");
+      var navPill = document.getElementById("nav-pill");
+      var menu = document.getElementById("mobile-menu");
+      var menuBtn = document.getElementById("menu-btn");
+      var menuOpen = false;
+      var lenis = null;
+
+      /* ---------- preloader ---------- */
+      var preloader = document.getElementById("preloader");
+      var introSeen = false;
+      try { introSeen = sessionStorage.getItem("kushagra_intro") === "1"; } catch (e) { introSeen = false; }
+
+      function unlockPage() {
+        body.classList.remove("is-loading");
+      }
+
+      function playHeroEntrance(delay) {
+        if (prefersReduced) {
+          gsap.fromTo("#hero-text, #hero-art-wrap", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, delay: delay || 0 });
+          return;
+        }
+        gsap.fromTo("#hero-text",
+          { autoAlpha: 0, y: 28 },
+          { autoAlpha: 1, y: 0, duration: 0.9, delay: delay || 0 });
+        gsap.fromTo("#hero-art-wrap",
+          { autoAlpha: 0, y: 28 },
+          { autoAlpha: 1, y: 0, duration: 0.9, delay: (delay || 0) + 0.12 });
+      }
+
+      if (introSeen || prefersReduced) {
+        preloader.remove();
+        unlockPage();
+        playHeroEntrance(0.1);
+      } else {
+        try { sessionStorage.setItem("kushagra_intro", "1"); } catch (e) {}
+        gsap.set(".pl-mask-path", { strokeDashoffset: 1 });
+        gsap.set(".pl-logo", { autoAlpha: 0, scale: 0.96 });
+        gsap.set("#hero-text, #hero-art-wrap", { autoAlpha: 0 });
+
+        var intro = gsap.timeline({
+          onComplete: function () {
+            preloader.remove();
+            unlockPage();
+          }
+        });
+        intro
+          .to(".pl-mask-path", { strokeDashoffset: 0, duration: 1.1, ease: "power2.inOut" })
+          .to(".pl-logo", { autoAlpha: 1, scale: 1, duration: 0.5 }, "-=0.05")
+          .to(".pl-stitch", { autoAlpha: 0, duration: 0.35 }, "<0.15")
+          .to(preloader, { yPercent: -100, duration: 0.8 }, "-=0.05")
+          .add(function () { playHeroEntrance(0); }, "-=0.55");
+      }
+
+      /* ---------- smooth scroll (Lenis) ---------- */
+      if (!prefersReduced && typeof Lenis !== "undefined") {
+        lenis = new Lenis({ lerp: 0.1 });
+        if (hasScrollTrigger) lenis.on("scroll", ScrollTrigger.update);
+        gsap.ticker.add(function (time) {
+          lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      /* ---------- nav: compact, hide on fast scroll down, show on scroll up ---------- */
+      var lastY = window.scrollY || 0;
+
+      function showNav() {
+        nav.classList.remove("is-hidden");
+      }
+
+      function navScroll(y) {
+        var dy = y - lastY;
+        lastY = y;
+        navBar.classList.toggle("is-compact", y > 120);
+        if (menuOpen || prefersReduced) { showNav(); return; }
+        if (y < 120) { showNav(); return; }
+        if (dy > 10) {
+          nav.classList.add("is-hidden");
+        } else if (dy < -2) {
+          showNav();
+        }
+      }
+
+      if (lenis) {
+        lenis.on("scroll", function (state) { navScroll(state.scroll); });
+      } else {
+        window.addEventListener("scroll", function () { navScroll(window.scrollY || 0); }, { passive: true });
+      }
+
+      /* ---------- nav pill (single moving element) ---------- */
+      var navLinkEls = Array.prototype.slice.call(navLinksWrap.querySelectorAll(".nav-link"));
+      var activeLink = null;
+      var hoveringLinks = false;
+
+      function movePillTo(link, fast) {
+        if (!link) {
+          gsap.to(navPill, { autoAlpha: 0, width: 0, duration: fast ? 0 : 0.3 });
+          return;
+        }
+        gsap.to(navPill, {
+          x: link.offsetLeft,
+          width: link.offsetWidth,
+          autoAlpha: 1,
+          duration: fast ? 0 : 0.4
+        });
+      }
+
+      function setActiveLink(id) {
+        navLinkEls.forEach(function (a) {
+          var on = a.getAttribute("href") === "#" + id;
+          a.classList.toggle("is-active", on);
+          if (on) {
+            a.setAttribute("aria-current", "true");
+            activeLink = a;
+          } else {
+            a.removeAttribute("aria-current");
+          }
+        });
+        if (!hoveringLinks) movePillTo(activeLink);
+      }
+
+      navLinkEls.forEach(function (a) {
+        a.addEventListener("mouseenter", function () {
+          hoveringLinks = true;
+          movePillTo(a);
+        });
+        a.addEventListener("focus", function () {
+          hoveringLinks = true;
+          movePillTo(a);
+        });
+      });
+      navLinksWrap.addEventListener("mouseleave", function () {
+        hoveringLinks = false;
+        movePillTo(activeLink);
+      });
+      navLinksWrap.addEventListener("focusout", function (ev) {
+        if (!navLinksWrap.contains(ev.relatedTarget)) {
+          hoveringLinks = false;
+          movePillTo(activeLink);
+        }
+      });
+
+      function refreshPill() {
+        var target = hoveringLinks ? null : activeLink;
+        if (target) {
+          gsap.set(navPill, { x: target.offsetLeft, width: target.offsetWidth, autoAlpha: 1 });
+        }
+      }
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(refreshPill);
+      }
+      window.addEventListener("resize", refreshPill);
+
+      /* ---------- active section tracking ---------- */
+      if (hasScrollTrigger) {
+        ["occasions", "fabrics", "boxes", "corporate"].forEach(function (id) {
+          var sec = document.getElementById(id);
+          if (!sec) return;
+          ScrollTrigger.create({
+            trigger: sec,
+            start: "top 45%",
+            end: "bottom 45%",
+            onToggle: function (self) {
+              if (self.isActive) setActiveLink(id);
+            }
+          });
+        });
+      }
+
+      /* ---------- smooth anchors with nav offset ---------- */
+      function anchorOffset() {
+        return -(navBar.offsetHeight + 36);
+      }
+
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener("click", function (ev) {
+          var href = a.getAttribute("href");
+          if (!href || href === "#") return;
+          var target = document.querySelector(href);
+          if (!target) return;
+          ev.preventDefault();
+          if (menuOpen) closeMenu(false);
+          if (lenis) {
+            lenis.scrollTo(target, { offset: anchorOffset(), duration: 1.2 });
+          } else {
+            var top = target.getBoundingClientRect().top + (window.scrollY || 0) + anchorOffset();
+            window.scrollTo({ top: top, behavior: prefersReduced ? "auto" : "smooth" });
+          }
+        });
+      });
+
+      /* ---------- mobile staggered menu ---------- */
+      var panels = [
+        menu.querySelector(".menu-panel--suiting"),
+        menu.querySelector(".menu-panel--chalk"),
+        menu.querySelector(".menu-panel--paper")
+      ];
+      var menuLinkEls = Array.prototype.slice.call(menu.querySelectorAll(".menu-link"));
+
+      gsap.set(panels, { xPercent: 100 });
+      gsap.set(menuLinkEls, { y: 40, autoAlpha: 0 });
+
+      function morphIcon(open) {
+        menuBtn.classList.toggle("is-open", open);
+        menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+
+      function lockScroll(lock) {
+        body.classList.toggle("is-locked", lock);
+        if (lenis) {
+          if (lock) { lenis.stop(); } else { lenis.start(); }
+        }
+      }
+
+      function openMenu() {
+        if (menuOpen) return;
+        menuOpen = true;
+        menu.classList.add("is-open");
+        menu.setAttribute("aria-hidden", "false");
+        morphIcon(true);
+        lockScroll(true);
+        showNav();
+
+        if (prefersReduced) {
+          gsap.set(panels, { xPercent: 0, autoAlpha: 0 });
+          gsap.set(menuLinkEls, { y: 0, autoAlpha: 0 });
+          gsap.to(panels, { autoAlpha: 1, duration: 0.3 });
+          gsap.to(menuLinkEls, { autoAlpha: 1, duration: 0.3, stagger: 0.04 });
+          window.setTimeout(function () {
+            if (menuOpen && menuLinkEls[0]) menuLinkEls[0].focus();
+          }, 120);
+          return;
+        }
+
+        var tl = gsap.timeline();
+        tl.to(panels[0], { xPercent: 0, duration: 0.55 }, 0)
+          .to(panels[1], { xPercent: 0, duration: 0.55 }, 0.08)
+          .to(panels[2], { xPercent: 0, duration: 0.55 }, 0.16)
+          .to(menuLinkEls, { y: 0, autoAlpha: 1, duration: 0.45, stagger: 0.06 }, 0.34);
+        window.setTimeout(function () {
+          if (menuOpen && menuLinkEls[0]) menuLinkEls[0].focus();
+        }, 420);
+      }
+
+      function closeMenu(returnFocus) {
+        if (!menuOpen) return;
+        menuOpen = false;
+        menu.setAttribute("aria-hidden", "true");
+        morphIcon(false);
+        lockScroll(false);
+
+        function finish() {
+          menu.classList.remove("is-open");
+          if (returnFocus !== false) menuBtn.focus();
+        }
+
+        if (prefersReduced) {
+          gsap.to(menuLinkEls, { autoAlpha: 0, duration: 0.2 });
+          gsap.to(panels, {
+            autoAlpha: 0,
+            duration: 0.25,
+            onComplete: function () {
+              gsap.set(panels, { xPercent: 100, autoAlpha: 1 });
+              gsap.set(menuLinkEls, { y: 40, autoAlpha: 0 });
+              finish();
+            }
+          });
+          return;
+        }
+
+        var tl = gsap.timeline({ onComplete: finish });
+        tl.to(menuLinkEls, { y: 30, autoAlpha: 0, duration: 0.3, stagger: 0.03 }, 0)
+          .to(panels[2], { xPercent: 100, duration: 0.5 }, 0.12)
+          .to(panels[1], { xPercent: 100, duration: 0.5 }, 0.2)
+          .to(panels[0], { xPercent: 100, duration: 0.5 }, 0.28);
+      }
+
+      menuBtn.addEventListener("click", function () {
+        if (menuOpen) { closeMenu(); } else { openMenu(); }
+      });
+
+      document.addEventListener("keydown", function (ev) {
+        if (!menuOpen) return;
+        if (ev.key === "Escape") {
+          ev.preventDefault();
+          closeMenu();
+          return;
+        }
+        if (ev.key === "Tab") {
+          var items = [menuBtn].concat(menuLinkEls);
+          var first = items[0];
+          var last = items[items.length - 1];
+          if (ev.shiftKey && document.activeElement === first) {
+            ev.preventDefault();
+            last.focus();
+          } else if (!ev.shiftKey && document.activeElement === last) {
+            ev.preventDefault();
+            first.focus();
+          } else if (items.indexOf(document.activeElement) === -1) {
+            ev.preventDefault();
+            first.focus();
+          }
+        }
+      });
+
+      window.addEventListener("resize", function () {
+        if (menuOpen && window.innerWidth >= 900) closeMenu(false);
+      });
+    })();
+  </script>
+</body>
+</html>
