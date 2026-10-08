@@ -27,6 +27,8 @@
       --font-head: "Bodoni Moda", "Times New Roman", serif;
       --font-body: "Cabin", system-ui, sans-serif;
       --nav-h: 60px;
+      --box-scale: 1;
+      --m-scale: 0.55;
     }
 
     /* ============ base ============ */
@@ -389,27 +391,33 @@
       font-size: 0.875rem;
     }
 
-    /* ============ hero ============ */
+    /* ============ hero (scroll-driven unboxing) ============ */
     .hero {
-      padding-top: clamp(140px, 18vw, 220px);
-      padding-bottom: clamp(96px, 14vw, 180px);
-      min-height: 100vh;
-      min-height: 100svh;
-      display: flex;
-      align-items: center;
-    }
-    .hero-grid { width: 100%; row-gap: clamp(40px, 6vw, 80px); align-items: end; }
-
-    .hero-text { grid-column: 2 / 9; }
-    .hero-art-wrap {
-      grid-column: 9 / 13;
       position: relative;
-      padding-bottom: 8px;
+      height: 100vh;
     }
-    .hero-art { width: 100%; height: auto; }
+
+    .hero-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* left column before the scroll starts */
+    .hero-intro {
+      position: absolute;
+      z-index: 5;
+      left: clamp(20px, 5vw, 64px);
+      top: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      width: min(32vw, 400px);
+    }
 
     .hero-tag {
-      margin-top: 28px;
       font-family: var(--font-body);
       font-size: 1.02rem;
       font-weight: 500;
@@ -417,24 +425,408 @@
       color: var(--suiting);
     }
 
+    .hero-hint {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 34px;
+      color: var(--chalk);
+      font-size: 0.875rem;
+    }
+
+    .hint-thread {
+      width: 2px;
+      height: 52px;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+    .hint-thread svg { animation: hintDrop 2.2s linear infinite; }
+    @keyframes hintDrop {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-70px); }
+    }
+
+    /* the 3D scene on the right */
+    .hero-scene {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 58%;
+      height: 100%;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1600px;
+      perspective-origin: 50% 50%;
+    }
+
+    .box-scale {
+      transform: scale(var(--box-scale));
+      transform-style: preserve-3d;
+    }
+
+    .box-float {
+      transform-style: preserve-3d;
+      animation: boxFloat 4s ease-in-out infinite;
+    }
+    @keyframes boxFloat {
+      0%, 100% { transform: translateY(2px); }
+      50%      { transform: translateY(-2px); }
+    }
+
+    .box-world {
+      transform-style: preserve-3d;
+      transform: rotateX(58deg) rotateZ(-18deg);
+    }
+
+    .box3d {
+      position: relative;
+      width: 520px;
+      height: 340px;
+      transform-style: preserve-3d;
+    }
+
+    /* linen texture: functional, keeps the dark surfaces from banding */
+    .box3d .face,
+    .box3d .lid-face {
+      background-image:
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.032) 0 1.5px, transparent 1.5px 4px),
+        repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.022) 0 1.5px, transparent 1.5px 4px);
+    }
+
+    .face {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: var(--suiting);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .b-bottom { width: 520px; height: 340px; transform: translate3d(0, 0, -60px); background-color: #131B28; }
+    .b-front  { width: 520px; height: 120px; transform: translate3d(0, 340px, 60px) rotateX(-90deg); transform-origin: 50% 0; background-color: #202B3D; }
+    .b-back   { width: 520px; height: 120px; transform: translate3d(0, 0, 60px) rotateX(-90deg); transform-origin: 50% 0; background-color: #182130; }
+    .b-left   { width: 340px; height: 120px; transform: translate3d(-170px, 170px, 60px) rotateZ(90deg) rotateX(-90deg); transform-origin: 50% 0; background-color: #1A2331; }
+    .b-right  { width: 340px; height: 120px; transform: translate3d(350px, 170px, 60px) rotateZ(90deg) rotateX(-90deg); transform-origin: 50% 0; background-color: #24304A; }
+
+    /* folded fabric bundle inside */
+    .bundle {
+      position: absolute;
+      left: 100px;
+      top: 55px;
+      width: 320px;
+      height: 230px;
+      transform-style: preserve-3d;
+    }
+    .bundle-slab {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 320px;
+      height: 230px;
+      border-radius: 6px;
+      background-color: #1E2A45;
+      background-image:
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 6px),
+        repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.07) 0 1px, transparent 1px 6px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .bundle-slab::after {
+      content: "";
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      top: 50%;
+      height: 2px;
+      background: rgba(0, 0, 0, 0.18);
+    }
+    .bundle-slab--1 { transform: translate3d(0, 0, -50px) rotateZ(-1.2deg); }
+    .bundle-slab--2 { transform: translate3d(8px, -6px, -28px) rotateZ(0.8deg); }
+    .bundle-slab--3 { transform: translate3d(-6px, 5px, -6px) rotateZ(-0.5deg); }
+
+    /* tissue paper */
+    .tissue {
+      position: absolute;
+      top: 15px;
+      width: 275px;
+      height: 310px;
+      background: rgba(247, 248, 250, 0.88);
+      border: 1px solid rgba(27, 36, 51, 0.12);
+      border-radius: 3px;
+      transform-style: preserve-3d;
+    }
+    .tissue::before,
+    .tissue::after {
+      content: "";
+      position: absolute;
+      top: 4%;
+      bottom: 4%;
+      width: 1px;
+      background: rgba(27, 36, 51, 0.08);
+    }
+    .tissue::before { left: 32%; }
+    .tissue::after  { left: 64%; }
+    .tissue-l { left: 2px;   transform: translate3d(0, 0, 42px); transform-origin: 0% 50%; }
+    .tissue-r { left: 243px; transform: translate3d(0, 0, 40px); transform-origin: 100% 50%; }
+
+    /* lid */
+    .box-lid {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 520px;
+      height: 340px;
+      transform-style: preserve-3d;
+      transform: translate3d(0, 0, 80px);
+    }
+    .lid-face {
+      position: absolute;
+      background-color: var(--suiting);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .lid-top   { left: -14px; top: -14px; width: 548px; height: 368px; transform: translate3d(0, 0, 20px); background-color: #232F44; }
+    .lid-front { left: -14px; top: -14px; width: 548px; height: 40px; transform: translate3d(0, 368px, 20px) rotateX(-90deg); transform-origin: 50% 0; background-color: #202B3D; }
+    .lid-back  { left: -14px; top: -14px; width: 548px; height: 40px; transform: translate3d(0, 0, 20px) rotateX(-90deg); transform-origin: 50% 0; background-color: #182130; }
+    .lid-left  { left: -14px; top: -14px; width: 368px; height: 40px; transform: translate3d(-184px, 184px, 20px) rotateZ(90deg) rotateX(-90deg); transform-origin: 50% 0; background-color: #1A2331; }
+    .lid-right { left: -14px; top: -14px; width: 368px; height: 40px; transform: translate3d(364px, 184px, 20px) rotateZ(90deg) rotateX(-90deg); transform-origin: 50% 0; background-color: #24304A; }
+
+    /* logo label on the lid */
+    .lid-label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #FFFFFF;
+      border-radius: 10px;
+      padding: 10px 16px;
+    }
+    .lid-label img { height: 30px; width: auto; }
+
+    /* ribbon + bow */
+    .rib { position: absolute; background: var(--red); }
+    .rib-a { left: 248px; top: 0; width: 52px; height: 368px; }
+    .rib-b { left: 0; top: 158px; width: 548px; height: 52px; }
+
+    .bow {
+      position: absolute;
+      left: 164px;
+      top: 196px;
+      width: 220px;
+      height: 140px;
+    }
+    .bow-loop {
+      position: absolute;
+      top: 34px;
+      width: 110px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+    .bow-loop--l { left: 0; transform: rotate(-28deg); }
+    .bow-loop--r { left: 110px; transform: rotate(28deg); }
+    .bow-knot {
+      position: absolute;
+      left: 88px;
+      top: 46px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--red);
+    }
+
+    /* marker at the mouth of the box (used to place the fabric) */
+    #fabric-mouth {
+      position: absolute;
+      left: 260px;
+      top: 170px;
+      width: 8px;
+      height: 8px;
+      margin: -4px 0 0 -4px;
+      transform: translate3d(0, 0, 62px);
+      pointer-events: none;
+    }
+
+    /* the fabric that unfolds */
+    .fabric-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .fabric-move {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 66.666%;
+      height: 100%;
+      transform-origin: 50% 100%;
+    }
+
+    .fabric-rise {
+      width: 100%;
+      height: 100%;
+      transform: scaleY(0);
+      transform-origin: 50% 100%;
+    }
+
+    .fabric-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-color: #22304F;
+      background-image:
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 6px),
+        repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.07) 0 1px, transparent 1px 6px);
+      border-right: 1px solid rgba(27, 36, 51, 0.25);
+      overflow: hidden;
+    }
+
+    /* stitched edge detail */
+    .fabric-face::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 12px;
+      width: 0;
+      border-right: 2px dashed var(--thread);
+      opacity: 0.5;
+    }
+
+    .crease {
+      position: absolute;
+      left: 6%;
+      width: 88%;
+      height: 2px;
+      background: rgba(238, 241, 244, 0.5);
+      opacity: 0.45;
+    }
+    .crease:nth-child(1) { top: 18%; transform: rotate(0.7deg) scaleX(0.96); }
+    .crease:nth-child(2) { top: 38%; transform: rotate(-0.55deg) scaleX(0.97); }
+    .crease:nth-child(3) { top: 58%; transform: rotate(0.5deg) scaleX(0.95); }
+    .crease:nth-child(4) { top: 78%; transform: rotate(-0.65deg) scaleX(0.96); }
+
+    /* headline on the fabric */
+    .hero-headline {
+      position: absolute;
+      z-index: 4;
+      left: clamp(20px, 6vw, 88px);
+      bottom: 11vh;
+      width: min(56vw, 760px);
+    }
+
+    .hero-headline h1 {
+      color: var(--shirting);
+    }
+
+    .hero-line {
+      display: block;
+      overflow: hidden;
+      padding-bottom: 0.1em;
+      margin-bottom: -0.1em;
+    }
+    .char { display: inline-block; }
+
+    .hero-lede {
+      margin-top: 26px;
+      max-width: 52ch;
+      color: rgba(238, 241, 244, 0.8);
+    }
+
+    .hero-headline .hero-actions { margin-top: 34px; }
+    .hero-headline .text-link {
+      color: var(--shirting);
+      border-bottom-color: rgba(238, 241, 244, 0.35);
+    }
+    .hero-headline .text-link:hover { border-bottom-color: var(--shirting); }
+
     .hero-actions {
       display: flex;
       align-items: center;
       gap: 26px;
-      margin-top: 38px;
     }
 
-    .hero-caption {
-      margin-top: 26px;
-      font-size: 0.875rem;
-      color: var(--chalk);
+    /* desktop: animated initial states */
+    @media (min-width: 768px) {
+      .char { transform: translateY(115%); }
+      .hero-lede, .hero-actions { opacity: 0; transform: translateY(26px); }
     }
 
-    .hero-spark {
+    /* ============ hero: mobile swipe frames ============ */
+    .hero-mobile { display: none; }
+
+    .m-frames {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding: 4px 20px 10px;
+      margin-inline: -20px;
+    }
+    .m-frames::-webkit-scrollbar { display: none; }
+
+    .m-frame {
+      position: relative;
+      flex: 0 0 calc(100vw - 40px);
+      height: min(62vw, 360px);
+      scroll-snap-align: center;
+      overflow: hidden;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-m);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1600px;
+    }
+    .m-frame .box-scale { transform: scale(var(--m-scale)); }
+
+    .m-fabric {
       position: absolute;
-      top: -6px;
-      right: 8px;
+      left: 26%;
+      bottom: 34%;
+      width: 48%;
+      height: 46%;
+      border-radius: 2px;
+      background-color: #22304F;
+      background-image:
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 6px),
+        repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.07) 0 1px, transparent 1px 6px);
     }
+
+    /* static states for the four frames */
+    .st-ribbon-off .rib, .st-ribbon-off .bow,
+    .st-lid-open .rib, .st-lid-open .bow,
+    .st-fabric .rib, .st-fabric .bow { opacity: 0; }
+
+    .st-lid-open .box-lid,
+    .st-fabric .box-lid {
+      transform: translate3d(380px, -380px, 320px) rotateX(48deg) rotateZ(16deg);
+      opacity: 0.85;
+    }
+
+    .st-lid-open .tissue-l, .st-fabric .tissue-l { transform: translate3d(0, 0, 42px) rotateY(-105deg); }
+    .st-lid-open .tissue-r, .st-fabric .tissue-r { transform: translate3d(0, 0, 40px) rotateY(105deg); }
+
+    .m-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .m-dot {
+      width: 9px;
+      height: 9px;
+      padding: 0;
+      border: 1px solid var(--suiting);
+      border-radius: var(--radius-pill);
+      background: transparent;
+      cursor: pointer;
+      transition: background-color 0.3s var(--ease);
+    }
+    .m-dot.is-active { background: var(--suiting); }
 
     /* ============ footer ============ */
     .footer {
@@ -465,8 +857,33 @@
       .nav-cta { padding: 11px 16px; }
 
       .place-a, .place-b, .place-c { grid-column: 1 / 13; }
-      .hero-text { grid-column: 1 / 13; }
-      .hero-art-wrap { grid-column: 1 / 11; }
+    }
+
+    @media (max-width: 767.98px) {
+      .hero { height: auto; padding-block: 130px 72px; }
+      .hero-stage { display: none; }
+      .hero-mobile { display: block; }
+      .hero-hint { display: none; }
+      .hero-intro {
+        position: static;
+        transform: none;
+        width: auto;
+        margin-bottom: 26px;
+      }
+      .hero-headline {
+        position: static;
+        width: auto;
+        margin-top: 44px;
+      }
+      /* headline sits on the light page here, not on the navy fabric */
+      .hero-headline h1 { color: var(--suiting); }
+      .hero-lede { color: var(--chalk); }
+      .hero-headline .text-link {
+        color: var(--suiting);
+        border-bottom-color: var(--line);
+      }
+      .char { transform: none; }
+      .hero-lede, .hero-actions { opacity: 1; transform: none; }
     }
 
     @media (max-width: 560px) {
@@ -474,13 +891,31 @@
       .footer-row { flex-direction: column; align-items: center; text-align: center; gap: 8px; }
     }
 
+    /* mobile + reduced motion: final state, no swipe track */
+    @media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
+      .hero { height: auto; }
+      .hero-stage {
+        display: block;
+        position: relative;
+        inset: auto;
+        height: 72vh;
+        margin-bottom: 40px;
+      }
+      .hero-mobile { display: none; }
+    }
+
     /* ============ reduced motion ============ */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
       }
       .btn:hover { transform: none; }
+      .box-float { animation: none; }
+      .hint-thread svg { animation: none; }
+      .char { transform: none; }
+      .hero-lede, .hero-actions { opacity: 1; transform: none; }
     }
   </style>
   <noscript>
@@ -562,54 +997,265 @@
 
   <main id="main" tabindex="-1">
 
-    <!-- Hero -->
+    <!-- Hero: the unboxing -->
     <section class="hero" id="hero" aria-labelledby="hero-title">
-      <div class="wrap grid hero-grid">
-        <div class="hero-text" id="hero-text">
-          <h1 id="hero-title">Give him cloth worth cutting.</h1>
+
+      <!-- desktop: pinned 3D scene -->
+      <div class="hero-stage" id="hero-stage">
+
+        <div class="hero-intro" id="hero-intro">
           <p class="hero-tag">Select • Stitch • Stand Out</p>
-          <p class="lede">Kushagra boxes premium unstitched shirting and suiting for men with a tailor they trust. You pick the fabric, he picks the cut, and the room notices both.</p>
-          <div class="hero-actions">
-            <a class="btn btn--dark" href="#boxes">Choose his box</a>
-            <a class="text-link" href="#how">How it works</a>
+          <div class="hero-hint">
+            <span class="hint-thread" aria-hidden="true">
+              <svg width="2" height="140" viewBox="0 0 2 140" fill="none" aria-hidden="true">
+                <line x1="1" y1="-28" x2="1" y2="140" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 8"/>
+              </svg>
+            </span>
+            <span>Scroll to open the box</span>
           </div>
-          <p class="hero-caption tnum">Box 02 · two shirt lengths · 2.4 m</p>
         </div>
-        <div class="hero-art-wrap" id="hero-art-wrap">
-          <svg class="hero-spark spark" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
-            <path d="M6 0c.4 3.2 2.8 5.6 6 6-3.2.4-5.6 2.8-6 6-.4-3.2-2.8-5.6-6-6 3.2-.4 5.6-2.8 6-6Z" fill="currentColor"/>
-          </svg>
-          <svg class="hero-art" viewBox="0 0 360 280" role="img" aria-label="A Kushagra gift box, folded cloth inside, tied with a red ribbon">
-            <!-- folded cloth peeking out of the box -->
-            <path d="M46 92 Q 78 50 116 84 Q 148 42 190 82 Q 232 42 268 84 Q 302 50 330 92 L 330 112 L 46 112 Z"
-                  fill="#F7F8FA" stroke="#1B2433" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M78 84 Q 116 66 150 88" fill="none" stroke="#1B2433" stroke-width="1.4" opacity="0.5"/>
-            <path d="M212 88 Q 252 66 292 86" fill="none" stroke="#1B2433" stroke-width="1.4" opacity="0.5"/>
-            <!-- box -->
-            <rect x="40" y="104" width="296" height="150" rx="8" fill="#F7F8FA" stroke="#1B2433" stroke-width="2"/>
-            <line x1="40" y1="132" x2="336" y2="132" stroke="#1B2433" stroke-width="1.5"/>
-            <!-- gift ribbon -->
-            <rect x="166" y="104" width="44" height="150" fill="#E63339"/>
-            <rect x="40" y="182" width="296" height="36" fill="#E63339"/>
-            <!-- bow -->
-            <path d="M188 200 L 152 182 Q 142 190 148 204 Q 156 214 188 200 Z" fill="#E63339"/>
-            <path d="M188 200 L 224 182 Q 234 190 228 204 Q 220 214 188 200 Z" fill="#E63339"/>
-            <circle cx="188" cy="200" r="8" fill="#E63339"/>
-            <!-- stitched edges -->
-            <line x1="48" y1="189" x2="328" y2="189" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
-            <line x1="48" y1="211" x2="328" y2="211" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
-            <line x1="173" y1="112" x2="173" y2="176" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
-            <line x1="203" y1="112" x2="203" y2="176" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
-            <line x1="173" y1="226" x2="173" y2="248" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
-            <line x1="203" y1="226" x2="203" y2="248" stroke="#F28C3C" stroke-width="2" stroke-dasharray="6 5"/>
-            <!-- measurement ticks -->
-            <line x1="40" y1="268" x2="336" y2="268" stroke="#6F7884" stroke-width="1" opacity="0.55"/>
-            <line x1="40" y1="262" x2="40" y2="274" stroke="#6F7884" stroke-width="1" opacity="0.55"/>
-            <line x1="188" y1="262" x2="188" y2="274" stroke="#6F7884" stroke-width="1" opacity="0.55"/>
-            <line x1="336" y1="262" x2="336" y2="274" stroke="#6F7884" stroke-width="1" opacity="0.55"/>
-          </svg>
+
+        <div class="hero-scene" id="hero-scene">
+          <div class="box-scale">
+            <div class="box-float">
+              <div class="box-world" id="box-world">
+                <div class="box3d">
+                  <div class="box-base">
+                    <div class="face b-bottom"></div>
+                    <div class="face b-back"></div>
+                    <div class="face b-front"></div>
+                    <div class="face b-left"></div>
+                    <div class="face b-right"></div>
+                  </div>
+                  <div class="bundle">
+                    <div class="bundle-slab bundle-slab--1"></div>
+                    <div class="bundle-slab bundle-slab--2"></div>
+                    <div class="bundle-slab bundle-slab--3"></div>
+                  </div>
+                  <div class="tissue tissue-l"></div>
+                  <div class="tissue tissue-r"></div>
+                  <div class="box-lid" id="box-lid">
+                    <div class="lid-face lid-front"></div>
+                    <div class="lid-face lid-back"></div>
+                    <div class="lid-face lid-left"></div>
+                    <div class="lid-face lid-right"></div>
+                    <div class="lid-face lid-top">
+                      <div class="rib rib-a"></div>
+                      <div class="rib rib-b"></div>
+                      <div class="bow">
+                        <span class="bow-loop bow-loop--l"></span>
+                        <span class="bow-loop bow-loop--r"></span>
+                        <span class="bow-knot"></span>
+                      </div>
+                      <div class="lid-label"><img src="logo.svg" alt="" width="44" height="30"></div>
+                    </div>
+                  </div>
+                  <div id="fabric-mouth" aria-hidden="true"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fabric-layer" aria-hidden="true">
+          <div class="fabric-move" id="fabric-move">
+            <div class="fabric-rise">
+              <div class="fabric-face">
+                <div class="crease"></div>
+                <div class="crease"></div>
+                <div class="crease"></div>
+                <div class="crease"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- mobile: swipe frames -->
+      <div class="hero-mobile" id="hero-mobile">
+        <p class="hero-tag">Select • Stitch • Stand Out</p>
+        <div class="m-frames" id="m-frames" aria-hidden="true">
+
+          <div class="m-frame st-closed">
+            <div class="box-scale">
+              <div class="box-float">
+                <div class="box-world">
+                  <div class="box3d">
+                    <div class="face b-bottom"></div>
+                    <div class="face b-back"></div>
+                    <div class="face b-front"></div>
+                    <div class="face b-left"></div>
+                    <div class="face b-right"></div>
+                    <div class="bundle">
+                      <div class="bundle-slab bundle-slab--1"></div>
+                      <div class="bundle-slab bundle-slab--2"></div>
+                      <div class="bundle-slab bundle-slab--3"></div>
+                    </div>
+                    <div class="tissue tissue-l"></div>
+                    <div class="tissue tissue-r"></div>
+                    <div class="box-lid">
+                      <div class="lid-face lid-front"></div>
+                      <div class="lid-face lid-back"></div>
+                      <div class="lid-face lid-left"></div>
+                      <div class="lid-face lid-right"></div>
+                      <div class="lid-face lid-top">
+                        <div class="rib rib-a"></div>
+                        <div class="rib rib-b"></div>
+                        <div class="bow">
+                          <span class="bow-loop bow-loop--l"></span>
+                          <span class="bow-loop bow-loop--r"></span>
+                          <span class="bow-knot"></span>
+                        </div>
+                        <div class="lid-label"><img src="logo.svg" alt="" width="44" height="30"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="m-frame st-ribbon-off">
+            <div class="box-scale">
+              <div class="box-float">
+                <div class="box-world">
+                  <div class="box3d">
+                    <div class="face b-bottom"></div>
+                    <div class="face b-back"></div>
+                    <div class="face b-front"></div>
+                    <div class="face b-left"></div>
+                    <div class="face b-right"></div>
+                    <div class="bundle">
+                      <div class="bundle-slab bundle-slab--1"></div>
+                      <div class="bundle-slab bundle-slab--2"></div>
+                      <div class="bundle-slab bundle-slab--3"></div>
+                    </div>
+                    <div class="tissue tissue-l"></div>
+                    <div class="tissue tissue-r"></div>
+                    <div class="box-lid">
+                      <div class="lid-face lid-front"></div>
+                      <div class="lid-face lid-back"></div>
+                      <div class="lid-face lid-left"></div>
+                      <div class="lid-face lid-right"></div>
+                      <div class="lid-face lid-top">
+                        <div class="rib rib-a"></div>
+                        <div class="rib rib-b"></div>
+                        <div class="bow">
+                          <span class="bow-loop bow-loop--l"></span>
+                          <span class="bow-loop bow-loop--r"></span>
+                          <span class="bow-knot"></span>
+                        </div>
+                        <div class="lid-label"><img src="logo.svg" alt="" width="44" height="30"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="m-frame st-lid-open">
+            <div class="box-scale">
+              <div class="box-float">
+                <div class="box-world">
+                  <div class="box3d">
+                    <div class="face b-bottom"></div>
+                    <div class="face b-back"></div>
+                    <div class="face b-front"></div>
+                    <div class="face b-left"></div>
+                    <div class="face b-right"></div>
+                    <div class="bundle">
+                      <div class="bundle-slab bundle-slab--1"></div>
+                      <div class="bundle-slab bundle-slab--2"></div>
+                      <div class="bundle-slab bundle-slab--3"></div>
+                    </div>
+                    <div class="tissue tissue-l"></div>
+                    <div class="tissue tissue-r"></div>
+                    <div class="box-lid">
+                      <div class="lid-face lid-front"></div>
+                      <div class="lid-face lid-back"></div>
+                      <div class="lid-face lid-left"></div>
+                      <div class="lid-face lid-right"></div>
+                      <div class="lid-face lid-top">
+                        <div class="rib rib-a"></div>
+                        <div class="rib rib-b"></div>
+                        <div class="bow">
+                          <span class="bow-loop bow-loop--l"></span>
+                          <span class="bow-loop bow-loop--r"></span>
+                          <span class="bow-knot"></span>
+                        </div>
+                        <div class="lid-label"><img src="logo.svg" alt="" width="44" height="30"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="m-frame st-fabric">
+            <div class="m-fabric"></div>
+            <div class="box-scale">
+              <div class="box-float">
+                <div class="box-world">
+                  <div class="box3d">
+                    <div class="face b-bottom"></div>
+                    <div class="face b-back"></div>
+                    <div class="face b-front"></div>
+                    <div class="face b-left"></div>
+                    <div class="face b-right"></div>
+                    <div class="bundle">
+                      <div class="bundle-slab bundle-slab--1"></div>
+                      <div class="bundle-slab bundle-slab--2"></div>
+                      <div class="bundle-slab bundle-slab--3"></div>
+                    </div>
+                    <div class="tissue tissue-l"></div>
+                    <div class="tissue tissue-r"></div>
+                    <div class="box-lid">
+                      <div class="lid-face lid-front"></div>
+                      <div class="lid-face lid-back"></div>
+                      <div class="lid-face lid-left"></div>
+                      <div class="lid-face lid-right"></div>
+                      <div class="lid-face lid-top">
+                        <div class="rib rib-a"></div>
+                        <div class="rib rib-b"></div>
+                        <div class="bow">
+                          <span class="bow-loop bow-loop--l"></span>
+                          <span class="bow-loop bow-loop--r"></span>
+                          <span class="bow-knot"></span>
+                        </div>
+                        <div class="lid-label"><img src="logo.svg" alt="" width="44" height="30"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="m-dots" id="m-dots" role="group" aria-label="Unboxing frames">
+          <button class="m-dot is-active" type="button" aria-label="Frame 1: closed box"></button>
+          <button class="m-dot" type="button" aria-label="Frame 2: ribbon off"></button>
+          <button class="m-dot" type="button" aria-label="Frame 3: lid open"></button>
+          <button class="m-dot" type="button" aria-label="Frame 4: the fabric"></button>
         </div>
       </div>
+
+      <!-- headline: on the fabric (desktop), below the frames (mobile) -->
+      <div class="hero-headline" id="hero-headline">
+        <h1 id="hero-title" aria-label="Give him the cloth. Let him make it his.">
+          <span class="hero-line" aria-hidden="true">Give him the cloth.</span>
+          <span class="hero-line" aria-hidden="true">Let him make it his.</span>
+        </h1>
+        <p class="hero-lede">Premium shirting and suiting lengths, boxed for gifting. You choose the cloth. He chooses the cut.</p>
+        <div class="hero-actions">
+          <a class="btn btn--red" id="hero-cta" href="#builder">Build a gift box</a>
+          <a class="text-link" href="#fabrics">See the fabrics</a>
+        </div>
+      </div>
+
     </section>
 
     <!-- 01 Occasions -->
@@ -754,6 +1400,7 @@
       var navPill = document.getElementById("nav-pill");
       var menu = document.getElementById("mobile-menu");
       var menuBtn = document.getElementById("menu-btn");
+      var heroEl = document.getElementById("hero");
       var menuOpen = false;
       var lenis = null;
 
@@ -767,16 +1414,25 @@
       }
 
       function playHeroEntrance(delay) {
+        var desktop = window.matchMedia("(min-width: 768px)").matches;
         if (prefersReduced) {
-          gsap.fromTo("#hero-text, #hero-art-wrap", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, delay: delay || 0 });
+          /* reduced motion: final state is already applied, fade the scene only */
+          gsap.fromTo(desktop ? "#hero-scene" : "#hero-mobile",
+            { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, delay: delay || 0 });
           return;
         }
-        gsap.fromTo("#hero-text",
-          { autoAlpha: 0, y: 28 },
-          { autoAlpha: 1, y: 0, duration: 0.9, delay: delay || 0 });
-        gsap.fromTo("#hero-art-wrap",
-          { autoAlpha: 0, y: 28 },
-          { autoAlpha: 1, y: 0, duration: 0.9, delay: (delay || 0) + 0.12 });
+        if (desktop) {
+          gsap.fromTo("#hero-intro",
+            { autoAlpha: 0, y: 28 },
+            { autoAlpha: 1, y: 0, duration: 0.9, delay: delay || 0 });
+          gsap.fromTo("#hero-scene",
+            { autoAlpha: 0, y: 28 },
+            { autoAlpha: 1, y: 0, duration: 0.9, delay: (delay || 0) + 0.12 });
+        } else {
+          gsap.fromTo("#hero-mobile",
+            { autoAlpha: 0, y: 28 },
+            { autoAlpha: 1, y: 0, duration: 0.9, delay: delay || 0 });
+        }
       }
 
       if (introSeen || prefersReduced) {
@@ -787,7 +1443,7 @@
         try { sessionStorage.setItem("kushagra_intro", "1"); } catch (e) {}
         gsap.set(".pl-mask-path", { strokeDashoffset: 1 });
         gsap.set(".pl-logo", { autoAlpha: 0, scale: 0.96 });
-        gsap.set("#hero-text, #hero-art-wrap", { autoAlpha: 0 });
+        gsap.set("#hero-intro, #hero-scene, #hero-mobile", { autoAlpha: 0 });
 
         var intro = gsap.timeline({
           onComplete: function () {
@@ -940,6 +1596,243 @@
           }
         });
       });
+
+      /* ---------- hero: split headline into characters ---------- */
+      Array.prototype.slice.call(document.querySelectorAll(".hero-line")).forEach(function (line) {
+        var text = line.textContent;
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < text.length; i++) {
+          var ch = text.charAt(i);
+          if (ch === " ") {
+            frag.appendChild(document.createTextNode(" "));
+          } else {
+            var span = document.createElement("span");
+            span.className = "char";
+            span.textContent = ch;
+            frag.appendChild(span);
+          }
+        }
+        line.textContent = "";
+        line.appendChild(frag);
+      });
+
+      /* ---------- hero: layout + fabric placement ---------- */
+      var fabricHome = { x: 0, y: 0, sx: 0.62, sy: 0.72 };
+      var mFrames = document.getElementById("m-frames");
+      var mDots = Array.prototype.slice.call(document.querySelectorAll(".m-dot"));
+
+      function layoutHero() {
+        var scene = document.getElementById("hero-scene");
+        if (scene) {
+          var rect = scene.getBoundingClientRect();
+          if (rect.width > 0) {
+            var s = Math.min(1, (rect.width - 60) / 640, (rect.height - 80) / 460);
+            s = Math.max(0.5, Math.min(1.15, s));
+            heroEl.style.setProperty("--box-scale", s);
+          }
+        }
+        var frame = mFrames ? mFrames.querySelector(".m-frame") : null;
+        if (frame) {
+          var fw = frame.getBoundingClientRect().width;
+          if (fw > 0) {
+            var ms = Math.max(0.28, Math.min(0.9, (fw - 10) / 660));
+            heroEl.style.setProperty("--m-scale", ms);
+          }
+        }
+        var stage = document.getElementById("hero-stage");
+        var mouth = document.getElementById("fabric-mouth");
+        var fm = document.getElementById("fabric-move");
+        if (stage && mouth && fm) {
+          var sr = stage.getBoundingClientRect();
+          if (sr.width > 0) {
+            gsap.set(fm, { clearProps: "transform" });
+            var pr = fm.getBoundingClientRect();
+            var mr = mouth.getBoundingClientRect();
+            if (pr.width > 0 && mr.width > 0) {
+              fabricHome.sx = Math.max(0.2, (mr.width * 1.15) / pr.width);
+              fabricHome.sy = Math.max(0.3, (sr.height * 0.72) / pr.height);
+              fabricHome.x = (mr.left + mr.width / 2) - (pr.left + pr.width / 2);
+              fabricHome.y = (mr.top + mr.height * 0.55) - pr.bottom;
+            }
+            gsap.set(fm, {
+              x: fabricHome.x,
+              y: fabricHome.y,
+              scaleX: fabricHome.sx,
+              scaleY: fabricHome.sy,
+              transformOrigin: "50% 100%"
+            });
+          }
+        }
+      }
+
+      function setWillChange(on) {
+        ["#box-lid", "#box-world", "#fabric-move", ".fabric-rise"].forEach(function (sel) {
+          var el = document.querySelector(sel);
+          if (el) el.style.willChange = on ? "transform" : "auto";
+        });
+      }
+
+      if (hasScrollTrigger) {
+        ScrollTrigger.addEventListener("refreshInit", layoutHero);
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () {
+            layoutHero();
+            ScrollTrigger.refresh();
+          });
+        } else {
+          layoutHero();
+        }
+      } else {
+        layoutHero();
+      }
+
+      /* ---------- hero: reduced motion = final state, no pin ---------- */
+      function applyFinalState() {
+        layoutHero();
+        gsap.set(".rib, .bow", { opacity: 0 });
+        gsap.set("#box-lid", { x: 380, y: -380, z: 320, rotationX: 48, rotation: 16, opacity: 0.85, transformOrigin: "50% 50%" });
+        gsap.set(".tissue-l", { z: 42, rotationY: -105, transformOrigin: "0% 50%" });
+        gsap.set(".tissue-r", { z: 40, rotationY: 105, transformOrigin: "100% 50%" });
+        gsap.set("#box-world", { rotationX: 30, rotation: -18 });
+        gsap.set(".fabric-rise", { scaleY: 1, transformOrigin: "50% 100%" });
+        gsap.set("#fabric-move", { x: 0, y: 0, scaleX: 1, scaleY: 1, transformOrigin: "50% 100%" });
+        gsap.set(".crease", { rotate: 0, scaleX: 1, opacity: 0.16 });
+        gsap.set(".char", { yPercent: 0 });
+        gsap.set(".hero-lede, .hero-actions", { autoAlpha: 1, y: 0 });
+        gsap.set("#hero-intro", { autoAlpha: 0 });
+      }
+
+      /* ---------- hero: the scroll-driven unboxing ---------- */
+      if (hasScrollTrigger && !prefersReduced) {
+        var mm = gsap.matchMedia();
+        mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", function () {
+          layoutHero();
+          var ctx = gsap.context(function () {
+            gsap.set("#box-world", { rotationX: 58, rotation: -18 });
+            gsap.set("#box-lid", { z: 80, transformOrigin: "50% 50%" });
+            gsap.set(".tissue-l", { z: 42, transformOrigin: "0% 50%" });
+            gsap.set(".tissue-r", { z: 40, transformOrigin: "100% 50%" });
+            gsap.set(".fabric-rise", { scaleY: 0, transformOrigin: "50% 100%" });
+            gsap.set(".fabric-move", {
+              x: fabricHome.x, y: fabricHome.y,
+              scaleX: fabricHome.sx, scaleY: fabricHome.sy,
+              transformOrigin: "50% 100%"
+            });
+            gsap.set(".char", { yPercent: 115 });
+            gsap.set(".hero-lede, .hero-actions", { autoAlpha: 0, y: 26 });
+
+            var master = gsap.timeline({
+              defaults: { ease: EASE },
+              scrollTrigger: {
+                trigger: "#hero",
+                start: "top top",
+                end: "+=250%",
+                pin: true,
+                scrub: 1,
+                invalidateOnRefresh: true,
+                onToggle: function (self) { setWillChange(self.isActive); }
+              }
+            });
+
+            /* 0–15%: ribbon slides off, bow drops away */
+            master
+              .to(".rib-a", { x: -620, opacity: 0, duration: 1.1 }, 0)
+              .to(".rib-b", { x: 620, opacity: 0, duration: 1.1 }, 0.12)
+              .to(".bow", { y: 260, rotation: 48, opacity: 0, duration: 1.15 }, 0.18)
+
+            /* 15–35%: lid lifts 220px, tips back 25deg, drifts out up-right */
+              .to("#box-lid", { z: 300, rotationX: 25, duration: 1.15, ease: "power2.inOut" }, 1.5)
+              .to("#box-lid", { x: 620, y: -520, z: 470, rotationX: 62, rotation: 16, opacity: 0, duration: 0.85, ease: "power2.in" }, 2.65)
+              .to("#hero-intro", { opacity: 0, y: -30, duration: 0.9 }, 1.8)
+
+            /* 35–55%: tissue parts around its outer edges */
+              .to(".tissue-l", { rotationY: -105, x: -50, duration: 1.5, ease: "power2.inOut" }, 3.5)
+              .to(".tissue-r", { rotationY: 105, x: 50, duration: 1.5, ease: "power2.inOut" }, 3.65)
+
+            /* 55–85%: fabric unfolds upward, creases flatten, box faces the viewer */
+              .to(".fabric-rise", { scaleY: 1, duration: 3, ease: "power1.inOut" }, 5.5)
+              .to(".crease", { rotate: 0, scaleX: 1, opacity: 0.16, duration: 2.2, stagger: 0.12 }, 5.7)
+              .to("#box-world", { rotationX: 30, duration: 3, ease: "power1.inOut" }, 5.5)
+
+            /* 85–100%: fabric fills the left two-thirds, the headline sets on it */
+              .fromTo(".fabric-move",
+                {
+                  x: function () { return fabricHome.x; },
+                  y: function () { return fabricHome.y; },
+                  scaleX: function () { return fabricHome.sx; },
+                  scaleY: function () { return fabricHome.sy; }
+                },
+                { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 1.35 }, 8.5)
+              .to(".char", { yPercent: 0, duration: 0.8, stagger: 0.02 }, 8.65)
+              .to(".hero-lede", { autoAlpha: 1, y: 0, duration: 0.7 }, 9.15)
+              .to(".hero-actions", { autoAlpha: 1, y: 0, duration: 0.7 }, 9.3);
+          }, heroEl);
+
+          return function () {
+            ctx.revert();
+            setWillChange(false);
+          };
+        });
+        if (window.matchMedia("(max-width: 767.98px)").matches) {
+          /* mobile never pins; make sure the headline is presentable */
+          gsap.set(".char", { yPercent: 0 });
+          gsap.set(".hero-lede, .hero-actions", { autoAlpha: 1, y: 0 });
+        }
+      } else {
+        /* reduced motion, or no ScrollTrigger: show the final state directly */
+        applyFinalState();
+      }
+
+      /* ---------- hero: magnetic primary button ---------- */
+      var heroCta = document.getElementById("hero-cta");
+      if (heroCta && !prefersReduced && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        var ctaX = gsap.quickTo(heroCta, "x", { duration: 0.4, ease: EASE });
+        var ctaY = gsap.quickTo(heroCta, "y", { duration: 0.4, ease: EASE });
+        var magnetOn = false;
+        window.addEventListener("mousemove", function (ev) {
+          var r = heroCta.getBoundingClientRect();
+          if (r.width === 0) return;
+          var cx = r.left + r.width / 2;
+          var cy = r.top + r.height / 2;
+          var dx = ev.clientX - cx;
+          var dy = ev.clientY - cy;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80 + (r.width + r.height) / 4) {
+            ctaX(dx * 0.3);
+            ctaY(dy * 0.3);
+            magnetOn = true;
+          } else if (magnetOn) {
+            ctaX(0);
+            ctaY(0);
+            magnetOn = false;
+          }
+        }, { passive: true });
+      }
+
+      /* ---------- hero: mobile frame dots ---------- */
+      function frameStep() {
+        var frame = mFrames ? mFrames.querySelector(".m-frame") : null;
+        return frame ? frame.offsetWidth + 16 : 1;
+      }
+
+      function setActiveDot(i) {
+        mDots.forEach(function (d, k) {
+          var on = k === i;
+          d.classList.toggle("is-active", on);
+          if (on) { d.setAttribute("aria-current", "true"); } else { d.removeAttribute("aria-current"); }
+        });
+      }
+
+      if (mFrames && mDots.length) {
+        mFrames.addEventListener("scroll", function () {
+          setActiveDot(Math.round(mFrames.scrollLeft / frameStep()));
+        }, { passive: true });
+        mDots.forEach(function (d, i) {
+          d.addEventListener("click", function () {
+            mFrames.scrollTo({ left: i * frameStep(), behavior: prefersReduced ? "auto" : "smooth" });
+          });
+        });
+      }
 
       /* ---------- mobile staggered menu ---------- */
       var panels = [
