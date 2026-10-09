@@ -1,6 +1,10 @@
 import Image from "next/image";
 
+import { Builder } from "@/components/builder/Builder";
+import { BoxTiers } from "@/components/boxes/BoxTiers";
 import { ScrollLink } from "@/components/chrome/ScrollLink";
+import { Occasions } from "@/components/occasions/Occasions";
+import { SwatchBook } from "@/components/fabrics/SwatchBook";
 import { SectionShell } from "@/components/sections/SectionShell";
 
 const year = new Date().getFullYear();
@@ -51,29 +55,13 @@ export default function HomePage() {
           </div>
         </section>
 
-        <SectionShell
-          id="occasions"
-          heading="Pick the occasion"
-          intro="Rakhi, a wedding, Diwali, an anniversary. The reason changes, the box does not."
-        />
+        <Occasions />
 
-        <SectionShell
-          id="fabrics"
-          heading="Feel the fabric"
-          intro="Six cloths from Coimbatore, Surat and Bhiwandi, chosen for how they behave after the first wash."
-        />
+        <SwatchBook />
 
-        <SectionShell
-          id="boxes"
-          heading="Choose his box"
-          intro="One length or three. The box weighs the same in the hand either way."
-        />
+        <BoxTiers />
 
-        <SectionShell
-          id="builder"
-          heading="Build the gift"
-          intro="Pick an occasion, a box and the cloth. We tie the ribbon and write the note card in your words."
-        />
+        <Builder />
 
         <SectionShell
           id="how"
