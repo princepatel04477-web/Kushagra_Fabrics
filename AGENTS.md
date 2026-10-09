@@ -136,6 +136,10 @@ Rules:
   - The footer wordmark animates the variable font's weight axis alongside
     `scaleY` — it needs a variable `wght` axis, so Bodoni Moda loads without
     a static weight list.
+  - The hero unboxing scrubs CSS custom properties (`--ribbon`, `--lid`, … `--type`)
+    on `.hero`; the "Hero unboxing" block in `globals.css` turns them into transforms
+    and opacity only. The CSS defaults are the open end state (no-JS, reduced motion);
+    `html[data-js]` starts it closed. Mobile frames set the same variables inline.
 - `prefers-reduced-motion`: **every** effect has a static end state.
   `<MotionConfig reducedMotion="user">` covers motion; GSAP and Lenis are guarded
   explicitly with `useReducedMotion()` (in `SmoothScroll`, which never constructs Lenis
@@ -149,8 +153,11 @@ Rules:
   `<NavLink>` (`chrome/NavLink.tsx`): same-page anchors scroll with Lenis, other pages
   `router.push(href, { scroll: false })`. `SmoothScroll` owns the reset on route change
   (top, or the URL's `#hash`) and re-runs `ScrollTrigger.refresh()`.
-- The preloader is server-rendered and hidden before first paint by `PRELOADER_SCRIPT`
-  (`html[data-preloaded]`) on repeat visits and under reduced motion. The session flag
+- The preloader is server-rendered and hidden before first paint by `HEAD_SCRIPT`
+  (`src/lib/headScript.ts`, `html[data-preloaded]`) on repeat visits and under reduced
+  motion. `HEAD_SCRIPT` also sets `html[data-js]`, which lets the hero start closed.
+  Never import a value for a server component from a `"use client"` file — it arrives
+  as a client-reference stub. The session flag
   is written when the curtain finishes — never on start, or StrictMode skips it.
 - Scroll locking is `stop()` / `start()` from `useSmoothScroll()` (Lenis + a
   `data-scroll-locked` fallback for reduced motion). Never `overflow: hidden` by hand.

@@ -322,7 +322,9 @@ export function HowItWorks() {
                   data-numeric
                   aria-hidden="true"
                   className="font-display text-[clamp(4.5rem,8vw,7.5rem)] leading-none"
-                  style={{ color: reduced ? color.suiting : color.chalk }}
+                  // Always chalk on render so server and client agree;
+                  // build() turns every number suiting under reduced motion.
+                  style={{ color: color.chalk }}
                 >
                   {index + 1}
                 </span>

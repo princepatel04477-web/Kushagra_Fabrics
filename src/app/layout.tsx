@@ -3,9 +3,10 @@ import { Bodoni_Moda, Cabin } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { Nav } from "@/components/chrome/Nav";
-import { PRELOADER_SCRIPT, Preloader } from "@/components/chrome/Preloader";
+import { Preloader } from "@/components/chrome/Preloader";
 import { Footer } from "@/components/chrome/Footer";
 import { Providers } from "@/components/providers/Providers";
+import { HEAD_SCRIPT } from "@/lib/headScript";
 
 import "./globals.css";
 
@@ -82,11 +83,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="en-IN"
       className={`${display.variable} ${body.variable}`}
-      // PRELOADER_SCRIPT sets data-preloaded before hydration.
+      // The head script sets data-js and data-preloaded before hydration.
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: PRELOADER_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
         <noscript>
           <style>{".preloader{display:none}"}</style>
         </noscript>

@@ -13,7 +13,7 @@
  * It plays once per session and never under prefers-reduced-motion.
  *
  * No flash: the shirting layer is part of the server HTML, so the page never
- * shows for a frame before the loader covers it. PRELOADER_SCRIPT runs before
+ * shows for a frame before the loader covers it. HEAD_SCRIPT (lib/headScript) runs before
  * first paint and hides the layer (html[data-preloaded]) when it should not
  * play. The session flag is written when the curtain finishes, not when it
  * starts, so StrictMode's double effect cannot skip the animation.
@@ -24,12 +24,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { useSmoothScroll } from "@/components/providers/SmoothScroll";
+import { PRELOADER_FLAG } from "@/lib/headScript";
 import { color, duration as tokenDuration, easeTailorBezier } from "@/lib/tokens";
-
-const PRELOADER_FLAG = "kushagra-preloaded";
-
-/** Inline, render-blocking: decides before paint whether the layer shows. */
-export const PRELOADER_SCRIPT = `try{if(sessionStorage.getItem("${PRELOADER_FLAG}")==="1"||matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.dataset.preloaded="1"}}catch(e){document.documentElement.dataset.preloaded="1"}`;
 
 const STITCH_LENGTH = 120;
 
