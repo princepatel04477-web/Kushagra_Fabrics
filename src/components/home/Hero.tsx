@@ -48,6 +48,14 @@ const DESKTOP_MOTION =
 
 const HEADLINE = ["Give him the cloth.", "Let him make it his."] as const;
 
+/** The four stages of the unboxing, captioned on the left as they play. */
+const STEPS = [
+  "Untie the ribbon",
+  "Lift the lid",
+  "Part the tissue",
+  "Unfold the cloth",
+] as const;
+
 /** Lines → words → characters, each character numbered for the stagger. */
 let charCount = 0;
 const HEADLINE_LINES = HEADLINE.map((line) =>
@@ -285,18 +293,43 @@ export function Hero() {
       <div ref={stageRef} className="hero-stage">
         <div className="hero-intro" aria-hidden="true">
           <div className="grid-shell w-full">
-            <div className="col-span-6 flex flex-col gap-10">
-              <p className="text-[clamp(1.5rem,2.4vw,2.25rem)] font-medium leading-[1.25] text-suiting">
-                Select • Stitch • Stand Out
-              </p>
-              <div className="flex items-center gap-4">
-                <span className="hero-cue">
-                  <span className="hero-cue-dash" />
-                </span>
-                <span className="text-[0.9375rem] text-chalk">
-                  Scroll to open the box
-                </span>
+            <div className="hero-intro-stack col-span-5">
+              <div className="hero-tagline flex flex-col gap-10">
+                <p className="font-display text-[clamp(2.5rem,4.4vw,4.25rem)] leading-[1.02] tracking-[-0.02em] text-suiting">
+                  Select. Stitch.
+                  <br />
+                  Stand out.
+                </p>
+                <div className="flex items-center gap-4">
+                  <span className="hero-cue">
+                    <span className="hero-cue-dash" />
+                  </span>
+                  <span className="text-[0.9375rem] text-chalk">
+                    Scroll to open the box
+                  </span>
+                </div>
               </div>
+
+              <ol className="hero-steps flex flex-col gap-6">
+                {STEPS.map((step, index) => (
+                  <li key={step} className="hero-step flex items-baseline gap-5">
+                    <span
+                      data-numeric
+                      className="w-6 font-display text-[1.5rem] leading-none text-chalk"
+                    >
+                      {index + 1}
+                    </span>
+                    <span className="flex flex-col gap-2">
+                      <span className="font-display text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.1] tracking-[-0.02em] text-suiting">
+                        {step}
+                      </span>
+                      <span className="hero-step-thread block w-24">
+                        <span className="stitch-line block" />
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ol>
             </div>
           </div>
         </div>
@@ -353,7 +386,7 @@ export function Hero() {
               >
                 <NavLink
                   href="/build"
-                  className="inline-flex h-12 items-center rounded-pill bg-red-deep px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
+                  className="inline-flex h-12 items-center rounded-pill bg-suiting px-7 text-[1rem] font-semibold text-shirting transition-opacity duration-300 hover:opacity-90 min-[900px]:bg-shirting min-[900px]:text-suiting"
                 >
                   Build a gift box
                 </NavLink>

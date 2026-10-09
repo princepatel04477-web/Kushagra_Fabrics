@@ -8,6 +8,7 @@
 
 import { useState } from "react";
 
+import { FabricTrio } from "@/components/boxes/FabricTrio";
 import { boxes } from "@/lib/data";
 import { formatINR } from "@/lib/format";
 import { useGiftStore } from "@/store/gift";
@@ -36,7 +37,7 @@ export function StepBox() {
     >
       <legend
         id="step-box-heading"
-        className="font-display text-[1.75rem] leading-[1.08] tracking-[-0.02em] text-suiting"
+        className="mb-5 font-display text-[1.75rem] leading-[1.08] tracking-[-0.02em] text-suiting"
       >
         1 · Choose the box
       </legend>
@@ -66,11 +67,12 @@ export function StepBox() {
                 onChange={() => handleChoose(box.id)}
                 className="sr-only"
               />
-              <span className="flex items-baseline justify-between gap-3">
+              <FabricTrio ids={box.preview} size={64} />
+              <span className="flex flex-col gap-1">
                 <span className="font-display text-[1.5rem] leading-[1.05] tracking-[-0.02em] text-suiting">
                   {box.name}
                 </span>
-                <span data-numeric className="shrink-0 text-[0.9375rem] text-chalk">
+                <span data-numeric className="text-[0.9375rem] text-chalk">
                   {formatINR(box.priceInr)}
                 </span>
               </span>

@@ -3,11 +3,10 @@
 /**
  * Corporate gifting — the dark section.
  *
- * Stats row counts up once on viewport entry (CountUp), client wordmarks
- * loop seamlessly (LogoLoop), and a bulk enquiry form validates on blur and
- * submit with plain, specific error messages. Valid submits swap the form
- * for a success panel summarising the enquiry, with a wa.me link carrying
- * the same details as a backup. Front-end only.
+ * A bulk enquiry form validates on blur and submit with plain, specific error
+ * messages. Valid submits swap the form for a success panel summarising the
+ * enquiry, with a wa.me link carrying the same details as a backup.
+ * Front-end only.
  */
 
 import {
@@ -18,32 +17,12 @@ import {
   type ReactNode,
 } from "react";
 
-import { CountUp } from "@/components/reactbits/CountUp";
-import { LogoLoop } from "@/components/reactbits/LogoLoop";
+import Image from "next/image";
+
+import heroBox from "@/assets/photos/hero-box.jpg";
 import { boxes } from "@/lib/data";
 import { PHONE_DISPLAY, PHONE_TEL, WHATSAPP_NUMBER } from "@/lib/contact";
 import { cn } from "@/lib/cn";
-
-/* ------------------------------------------------------------- constants -- */
-
-const STATS: readonly { readonly end: number; readonly label: string }[] = [
-  { end: 12000, label: "boxes delivered" },
-  { end: 180, label: "companies" },
-  { end: 40, label: "cities" },
-];
-
-const CLIENTS: readonly string[] = [
-  "Surat Diamond Works",
-  "Navkar Textiles",
-  "Riddhi Infra",
-  "Mehta & Sons",
-  "Vantika Diamonds",
-  "Shreeji Polymers",
-  "Amardeep Steels",
-  "Ganga Exports",
-  "Kiran Handlooms",
-  "Omkar Realtors",
-];
 
 const INCLUDES: readonly string[] = [
   "Your logo on the gift card",
@@ -278,7 +257,7 @@ export function Corporate({ headingLevel = 2 }: SectionProps) {
       )}
     >
       <div className="grid-shell">
-        <div className="col-span-12 flex flex-col gap-6 lg:col-span-7">
+        <div className="col-span-12 flex flex-col justify-center gap-6 lg:col-span-6">
           <Heading id="corporate-heading">Gifting for teams</Heading>
           <p className="text-[1.0625rem] text-shirting/70">
             Diwali boxes for 50 people or wedding favours for 500. We handle
@@ -286,25 +265,18 @@ export function Corporate({ headingLevel = 2 }: SectionProps) {
           </p>
         </div>
 
-        <div className="col-span-12 mt-14 grid grid-cols-1 gap-10 sm:grid-cols-3">
-          {STATS.map((stat) => (
-            <div key={stat.label} className="flex flex-col gap-1">
-              <CountUp
-                end={stat.end}
-                suffix="+"
-                className="font-display text-[clamp(2.5rem,5vw,4rem)] leading-none"
-              />
-              <p className="text-shirting/70">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="col-span-12 mt-14">
-          <LogoLoop
-            names={CLIENTS}
-            className="text-[1.125rem] text-shirting/60"
+        <div className="relative col-span-12 mt-10 aspect-[4/5] overflow-hidden rounded-m border border-line bg-paper lg:col-span-5 lg:col-start-8 lg:mt-0">
+          <Image
+            src={heroBox}
+            alt="An open navy Kushagra gift box holding folded fabric lengths, note card and red ribbon"
+            fill
+            sizes="(min-width: 1320px) 490px, (min-width: 1024px) 40vw, 100vw"
+            placeholder="blur"
+            className="object-cover"
           />
         </div>
+
+        {/* TODO(client): Real figures and client logos can return once the client supplies them with permission. */}
 
         <div className="col-span-12 mt-20 grid grid-cols-1 gap-14 lg:grid-cols-2">
           <div className="flex flex-col gap-6">

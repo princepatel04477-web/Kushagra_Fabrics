@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The gift card that sits on top of the preview box: To and From in Cabin,
+ * The gift card that sits under the gift summary: To and From in Cabin,
  * the message typed letter by letter in Bodoni Moda italic (React Bits
  * TextType). An empty message shows the placeholder line instead.
  */
@@ -17,7 +17,7 @@ export interface GiftCardProps {
 
 export function GiftCard({ note, occasionName }: GiftCardProps) {
   return (
-    <div className="w-[240px] max-w-full rotate-[-2deg] rounded-m border border-line bg-paper p-5">
+    <div className="w-full rounded-m border border-line bg-shirting p-5">
       {occasionName !== undefined ? (
         <p className="text-[0.8125rem] text-chalk">{occasionName}</p>
       ) : null}

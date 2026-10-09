@@ -12,9 +12,7 @@ import "./globals.css";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
-  // No weight list: Bodoni Moda is a variable font (wght 400–900), and the
-  // footer wordmark animates the weight axis per letter. Static instances
-  // would snap between weights instead of moving smoothly.
+  // No weight list: Bodoni Moda loads as its variable font (wght 400–900).
   style: ["normal", "italic"],
   variable: "--font-bodoni-moda",
   display: "swap",
@@ -55,10 +53,10 @@ export const metadata: Metadata = {
     locale: "en_IN",
     images: [
       {
-        url: "/brand/kushagra-logo.png",
-        width: 816,
-        height: 564,
-        alt: "Kushagra",
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "A Kushagra shirt box with two folded shirt lengths and a red ribbon",
       },
     ],
   },

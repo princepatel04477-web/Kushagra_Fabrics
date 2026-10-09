@@ -85,9 +85,9 @@ bare `rounded-s` (logical start radius). Do not remove that rule.
 
 - 12-column shell: `.grid-shell` — `max-width: 1320px`,
   `padding-inline: clamp(20px, 5vw, 64px)`, `column-gap: clamp(16px, 2vw, 28px)`.
-- `.section-pad` — `padding-block: clamp(96px, 14vw, 180px)`.
+- `.section-pad` — `padding-block: clamp(72px, 9vw, 128px)`.
 - `.page-top` — replaces `.section-pad` on the first section of a route
-  (`padding-top: clamp(150px, 16vw, 220px)`) so the `h1` clears the floating nav.
+  (`padding-top: clamp(132px, 13vw, 176px)`) so the `h1` clears the floating nav.
 - Content sits **left and slightly off-centre** — like folded cloth in a box. Headings
   take columns 1–7 (`lg:col-span-7`), content spans 12. The **only** centred symmetric
   layout on the site is the footer wordmark.
@@ -99,8 +99,8 @@ The site is multi-page. Do not fold pages back into anchors on `/`.
 
 | Route        | Contents                                                        |
 | ------------ | --------------------------------------------------------------- |
-| `/`          | Hero, occasions, how it works, what he made of it               |
-| `/fabrics`   | Swatch book (`SwatchBook headingLevel={1}`)                      |
+| `/`          | Unboxing hero, the cloth, the boxes, how it works, occasions    |
+| `/fabrics`   | Filterable grid of `FabricCard`s (`FabricGrid headingLevel={1}`) |
 | `/boxes`     | Box tiers                                                       |
 | `/build`     | Gift builder. Reads `?box=&fabric=&fabric=&occasion=` (`BuildParams`) |
 | `/corporate` | Corporate gifting and bulk enquiry form                         |
@@ -120,7 +120,7 @@ component is in the wrong place.
 
 | Owner                 | Owns                                                                                    |
 | --------------------- | --------------------------------------------------------------------------------------- |
-| **GSAP + ScrollTrigger** | Anything tied to scroll position: hero unboxing, the stitch line drawing, footer stitch. |
+| **GSAP + ScrollTrigger** | Anything tied to scroll position: the hero unboxing (pinned, scrubbed) and the footer stitch. |
 | **motion/react**      | Mount/unmount, gestures, layout and shared-element: drawer, menus, builder fly-in, bag badge. |
 | **React Bits**        | Exactly the one location it is assigned to. One component, one place.                     |
 | **Lenis**             | Scrolling. It is the only smooth-scroll source.                                          |
@@ -130,16 +130,19 @@ Rules:
 - Animate **transform and opacity only**. Documented exceptions:
   - The nav bar's compact state is a CSS `transition` on `height`/`padding` —
     a single fixed element, on a threshold cross, never per frame.
-  - The stitch lines (how-it-works, footer) reveal via `stroke-dashoffset`
-    inside an SVG mask, and the needle rides the path through SVG geometry —
-    drawing primitives, not layout.
-  - The footer wordmark animates the variable font's weight axis alongside
-    `scaleY` — it needs a variable `wght` axis, so Bodoni Moda loads without
-    a static weight list.
-  - The hero unboxing scrubs CSS custom properties (`--ribbon`, `--lid`, … `--type`)
-    on `.hero`; the "Hero unboxing" block in `globals.css` turns them into transforms
-    and opacity only. The CSS defaults are the open end state (no-JS, reduced motion);
-    `html[data-js]` starts it closed. Mobile frames set the same variables inline.
+  - The footer stitch line reveals via `stroke-dashoffset` inside an SVG
+    mask — a drawing primitive, not layout.
+  - The footer wordmark (`TextPressure`) animates the variable font's weight
+    axis alongside `scaleY` — Bodoni Moda loads without a static weight list
+    for this. Its size is capped so letters fit their cells at full weight.
+  - The hero unboxing scrubs CSS custom properties (`--ribbon`, `--lid`, …
+    `--type`) on `.hero`; the "Hero unboxing" block in `globals.css` turns them
+    into transforms and opacity only. The CSS defaults are the open end state
+    (no-JS, reduced motion); `html[data-js]` starts it closed. Mobile frames
+    set the same variables inline. The cloth is drawn in CSS (`heroTwillStyle`
+    in `HeroBox.tsx`) — never a stretched photo, which goes soft at panel
+    size. The box's soft cast shadow on its floor plane is part of the
+    drawing, the one sanctioned shadow.
 - `prefers-reduced-motion`: **every** effect has a static end state.
   `<MotionConfig reducedMotion="user">` covers motion; GSAP and Lenis are guarded
   explicitly with `useReducedMotion()` (in `SmoothScroll`, which never constructs Lenis
@@ -172,16 +175,11 @@ our tokens — React Bits' default colours must never survive contact with this 
 | `PillNav`        | `chrome/Nav.tsx` — floating bar, ≥ 900px        | 1     | ✅     |
 | `StaggeredMenu`  | `chrome/MobileMenu.tsx` — under 900px           | 1     | ✅     |
 | `FlowingMenu`    | `occasions/Occasions.tsx` — occasion rows, suiting marquee band | 3 | ✅ |
-| `Stack`          | `fabrics/SwatchBook.tsx` — draggable swatch pile | 3     | ✅     |
-| `GlareHover`     | `fabrics/SwatchBook.tsx` — sheen on the top swatch only | 3 | ✅ |
-| `TiltedCard`     | `boxes/BoxTiers.tsx` — box tier cards | 4     | ✅     |
 | `TextType`       | `builder/GiftCard.tsx` — the note card typing | 4     | ✅     |
 | `ClickSpark`     | `builder/Builder.tsx` — Add to bag sparks (thread colour) | 4 | ✅ |
-| `Magnet`         | `builder/Builder.tsx` — Add to bag magnetic pull                  | 4     | ✅     |
-| `CountUp`        | `corporate/Corporate.tsx` — corporate stats row                   | 6     | ✅     |
-| `LogoLoop`       | `corporate/Corporate.tsx` — client wordmark marquee               | 6     | ✅     |
-| `CircularText`   | `chrome/Footer.tsx` — rotating Select-Stitch-Stand-Out badge      | 6     | ✅     |
-| `TextPressure`   | `chrome/Footer.tsx` — giant KUSHAGRA wordmark (variable weight)   | 6     | ✅     |
+| `TextPressure`   | `chrome/Footer.tsx` — giant KUSHAGRA wordmark (variable weight) | 6 | ✅ |
+
+Removed in the 2026-10 redesign: `Stack`, `GlareHover`, `TiltedCard`, `Magnet`, `CountUp`, `LogoLoop`, `CircularText`.
 
 Install with
 `npx shadcn@latest add https://reactbits.dev/r/<Name>-TS-TW`
@@ -194,8 +192,9 @@ and restyle before committing.
 ## 6. Data and money
 
 - `src/lib/data.ts` types the catalogue: `Occasion`, `Fabric` (`kind: 'shirting' | 'suiting'`,
-  plus a `texture` key drawn in CSS by `fabrics/FabricTexture.tsx` and a one-line `wear` note),
-  `BoxTier` with slot rules. Later phases add contents to boxes, not new shapes.
+  plus an `image` — a static import from `src/assets/photos` — and a one-line `wear` note),
+  `BoxTier` with slot rules and `preview` (fabric ids shown in its `FabricTrio`).
+  Later phases add contents to boxes, not new shapes.
 - Slot logic for the builder is pure and unit-testable in `src/lib/slots.ts`
   (`canAdd`, `remaining`, `ruleString`, `missingString`, `blockedReason`). The builder chips,
   the "Add to bag" guard and the box-change trimming all read from there.
@@ -244,3 +243,24 @@ and restyle before committing.
   focus to their trigger.
 - Every section is a `<section>` with `aria-labelledby` pointing at its heading.
 - Icon-only buttons carry an `aria-label` that says what they do and how many.
+
+---
+
+## 10. Photography
+
+The photographs in `src/assets/photos/` (and `public/og.jpg`) are AI-generated
+art-direction stand-ins; real photography of Kushagra's cloth and boxes replaces
+them before launch. See `docs/PHOTO_SHOT_LIST.md` for the brief. Never fetch or
+hotlink stock photos to fill a gap.
+
+- Import images statically and render with `next/image` and `placeholder="blur"`
+  plus a correct `sizes`. `priority` only on a photo in the first viewport (none on `/`: the hero is drawn in CSS).
+- Frame: `rounded-m overflow-hidden bg-paper border border-line`. Photos are never
+  rotated, tilted, skewed or put in an arc.
+- Fabric photos are always 4:5 (`aspect-[4/5]`, `object-cover`). The one hover
+  effect on a photo is `scale(1.03)` over 600ms `ease-tailor` inside its frame
+  (CSS transition, `motion-safe:` only).
+- `alt` describes the cloth or box plainly ("Charcoal herringbone wool, folded").
+- Buttons share one look: `.btn-primary` (red-deep, the single primary),
+  `.btn-solid` (suiting fill) and `.btn-outline` (1px suiting border), all pills,
+  48px tall, no glyphs in the label. `.link-quiet` is the underlined text link.

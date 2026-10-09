@@ -1,13 +1,17 @@
 "use client";
 
 /**
- * The box tiers: three TiltedCards in an asymmetric row — the middle card
- * taller and raised. Choosing a box stores it and opens /build.
+ * The box tiers: one banner photograph, then three flat cards in a row
+ * (stacked below 900px). Each card shows the cloth it might hold, the price,
+ * what arrives, who it is for, and one action — choosing a box stores it and
+ * opens /build. No tilt, no raised middle card: the three are equal.
  */
 
-import { GiftBox } from "@/components/boxes/GiftBox";
+import Image from "next/image";
+
+import boxShirt from "@/assets/photos/box-shirt.jpg";
+import { FabricTrio } from "@/components/boxes/FabricTrio";
 import { SectionShell } from "@/components/sections/SectionShell";
-import { TiltedCard } from "@/components/reactbits/TiltedCard";
 import { boxes } from "@/lib/data";
 import { formatINR } from "@/lib/format";
 import { useNavigate } from "@/lib/useNavigate";
@@ -35,26 +39,42 @@ export function BoxTiers({ headingLevel }: SectionProps) {
       heading="Choose his box"
       headingLevel={headingLevel}
       intro="Every box arrives wrapped, ribboned and ready to hand over."
+      contentClassName="mt-10"
     >
-      <div className="grid items-start gap-6 md:grid-cols-3">
-        {boxes.map((box, index) => {
+      <div className="relative aspect-[4/3] overflow-hidden rounded-m border border-line bg-paper min-[900px]:aspect-[21/9]">
+        <Image
+          src={boxShirt}
+          alt="A slim navy Kushagra box with a red bow on the lid, beside folded white and Bengal stripe shirt lengths"
+          fill
+          sizes="(min-width: 1320px) 1192px, 100vw"
+          placeholder="blur"
+          className="object-cover"
+        />
+      </div>
+
+      <ul className="mt-8 grid grid-cols-1 gap-6 min-[900px]:grid-cols-3">
+        {boxes.map((box) => {
           const selected = box.id === selectedBox;
-          const middle = index === 1;
 
           return (
-            <TiltedCard key={box.id} className={cn(middle && "md:-mt-8")}>
+            <li key={box.id}>
               <article
+                aria-labelledby={`box-${box.id}-name`}
                 className={cn(
                   "flex h-full flex-col gap-5 rounded-m border bg-paper p-6",
-                  middle ? "md:py-12" : "md:py-8",
                   selected ? "border-suiting" : "border-line",
                 )}
               >
-                <GiftBox size="sm" stage="open" />
+                <FabricTrio ids={box.preview} size={112} />
 
                 <div className="flex items-baseline justify-between gap-4">
-                  <h3 className="text-suiting">{box.name}</h3>
-                  <span data-numeric className="shrink-0 text-[1rem] text-chalk">
+                  <h3 id={`box-${box.id}-name`} className="text-suiting">
+                    {box.name}
+                  </h3>
+                  <span
+                    data-numeric
+                    className="shrink-0 text-[1rem] text-chalk"
+                  >
                     {formatINR(box.priceInr)}
                   </span>
                 </div>
@@ -72,24 +92,26 @@ export function BoxTiers({ headingLevel }: SectionProps) {
                   ))}
                 </ul>
 
+                <p className="text-[0.9375rem] text-chalk">
+                  Best for: {box.bestFor}
+                </p>
+
                 <button
                   type="button"
                   aria-pressed={selected ? "true" : undefined}
                   onClick={() => handleChoose(box.id)}
                   className={cn(
-                    "mt-auto inline-flex h-12 items-center justify-center rounded-pill px-7 text-[1rem] font-semibold transition-colors duration-300",
-                    selected
-                      ? "bg-suiting text-shirting"
-                      : "border border-line text-suiting hover:bg-suiting hover:text-shirting",
+                    "mt-auto self-start",
+                    selected ? "btn-solid" : "btn-outline",
                   )}
                 >
                   {selected ? "Chosen" : "Choose this box"}
                 </button>
               </article>
-            </TiltedCard>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </SectionShell>
   );
 }

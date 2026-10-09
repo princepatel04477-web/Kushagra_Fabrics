@@ -3,15 +3,33 @@
 /**
  * Step 2 of the builder: a chip for each of the eight fabrics. Slot logic
  * comes from src/lib/slots.ts — chips that no longer fit the box are marked
- * aria-disabled with a title saying why. The chip's swatch carries the
- * shared layoutId while the fabric is unpicked, so picking it flies the cloth
- * into the preview box (and back out again on deselect).
+ * aria-disabled with a title saying why. The chip's 40px photograph carries
+ * the shared layoutId while the fabric is unpicked, so picking it flies the
+ * cloth into the gift summary (and back out again on deselect).
  */
 
+function Thumb({ fabric }: { readonly fabric: Fabric }) {
+  return (
+    <Image
+      src={fabric.image}
+      alt=""
+      fill
+      sizes="40px"
+      className="object-cover"
+    />
+  );
+}
+
+import Image from "next/image";
 import { motion } from "motion/react";
 
-import { fabricTextureStyle } from "@/components/fabrics/FabricTexture";
-import { boxCapacityFor, boxSlotCount, fabrics, getBox } from "@/lib/data";
+import {
+  boxCapacityFor,
+  boxSlotCount,
+  fabrics,
+  getBox,
+  type Fabric,
+} from "@/lib/data";
 import { blockedReason, remaining, ruleString } from "@/lib/slots";
 import { useGiftStore } from "@/store/gift";
 import { cn } from "@/lib/cn";
@@ -94,16 +112,18 @@ export function StepFabrics() {
                 {selected ? (
                   <span
                     aria-hidden="true"
-                    className="h-8 w-8 shrink-0 rounded-s ring-2 ring-shirting"
-                    style={fabricTextureStyle(fabric)}
-                  />
+                    className="relative h-10 w-10 shrink-0 overflow-hidden rounded-s ring-2 ring-shirting"
+                  >
+                    <Thumb fabric={fabric} />
+                  </span>
                 ) : (
                   <motion.span
                     layoutId={`fabric-${fabric.id}`}
                     aria-hidden="true"
-                    className="h-8 w-8 shrink-0 rounded-s"
-                    style={fabricTextureStyle(fabric)}
-                  />
+                    className="relative h-10 w-10 shrink-0 overflow-hidden rounded-s"
+                  >
+                    <Thumb fabric={fabric} />
+                  </motion.span>
                 )}
                 <span className="flex flex-col">
                   <span className="text-[0.9375rem] font-medium">

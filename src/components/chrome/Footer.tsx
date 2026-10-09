@@ -5,11 +5,10 @@
  *
  * A dashed thread stitch runs across the top edge and draws itself once,
  * left to right, when the footer enters the viewport. Top row: logo, one
- * line, three link columns and the rotating SELECT • STITCH • STAND OUT
- * badge with the K mark in its centre. Below that, the giant KUSHAGRA
- * wordmark — Bodoni Moda on its variable weight axis — presses heavier and
- * taller near the cursor (TextPressure). The bottom bar carries the
- * copyright, the legal links and the contact anchors.
+ * line and three link columns. Below that, the giant KUSHAGRA wordmark —
+ * Bodoni Moda on its variable weight axis — presses heavier and taller near
+ * the cursor (TextPressure). The bottom bar carries the copyright, the legal
+ * links and the contact anchors.
  */
 
 import { useCallback, useEffect, useRef } from "react";
@@ -19,7 +18,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "motion/react";
 
 import { NavLink } from "@/components/chrome/NavLink";
-import { CircularText } from "@/components/reactbits/CircularText";
 import { TextPressure } from "@/components/reactbits/TextPressure";
 import { color, gsapEaseName } from "@/lib/tokens";
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, WHATSAPP_LINK } from "@/lib/contact";
@@ -222,27 +220,14 @@ export function Footer() {
             ))}
           </nav>
 
-          <CircularText
-            text="SELECT • STITCH • STAND OUT • "
-            size={140}
-            className="text-suiting lg:pt-2"
-          >
-            <Image
-              src="/brand/kushagra-mark.png"
-              alt=""
-              width={30}
-              height={36}
-              loading="lazy"
-              decoding="async"
-              className="h-9 w-[30px]"
-            />
-          </CircularText>
         </div>
 
         <div className="col-span-12 mt-16 lg:mt-24">
           <TextPressure
             text="KUSHAGRA"
-            className="font-display text-suiting text-[clamp(2.5rem,16vw,14rem)]"
+            // Sized so the letters still fit their cells when the cursor
+            // presses them to full weight.
+            className="font-display text-suiting text-[clamp(2.5rem,12.5vw,12rem)]"
           />
         </div>
 

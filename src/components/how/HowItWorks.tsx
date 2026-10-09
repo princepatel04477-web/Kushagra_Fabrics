@@ -18,11 +18,14 @@
  */
 
 import { useCallback, useEffect, useRef } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "motion/react";
 
+import boxShirt from "@/assets/photos/box-shirt.jpg";
+import fabricHerringbone from "@/assets/photos/fabric-herringbone.jpg";
+import fabricOxford from "@/assets/photos/fabric-oxford.jpg";
 import { SectionShell } from "@/components/sections/SectionShell";
 import { color } from "@/lib/tokens";
 
@@ -33,7 +36,7 @@ if (typeof window !== "undefined") {
 interface Step {
   readonly title: string;
   readonly body: string;
-  readonly image: string;
+  readonly image: StaticImageData;
   readonly alt: string;
 }
 
@@ -41,23 +44,20 @@ const STEPS: readonly Step[] = [
   {
     title: "Select the fabric",
     body: "You choose the cloth, the box and the note. We wrap it, tie the ribbon and deliver it to his door.",
-    image:
-      "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=800&auto=format&fit=crop",
-    alt: "A length of fabric laid out for cutting",
+    image: boxShirt,
+    alt: "A slim navy Kushagra box holding two folded shirt lengths, its lid tied with a red bow",
   },
   {
     title: "He gets it stitched",
     body: "He takes the lengths to the tailor he trusts. Every box includes a care note and measurements for each length.",
-    image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop",
-    alt: "A tailor measuring and adjusting a garment on his client",
+    image: fabricHerringbone,
+    alt: "Charcoal herringbone wool, folded, its selvedge ready for the tailor",
   },
   {
     title: "He stands out",
     body: "A shirt cut for his shoulders. A suit that fits the way he stands. Made from cloth you picked for him.",
-    image:
-      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=800&auto=format&fit=crop",
-    alt: "A man wearing a dark tailored suit",
+    image: fabricOxford,
+    alt: "Crisp white Oxford shirting, folded and pressed",
   },
 ];
 
@@ -333,11 +333,9 @@ export function HowItWorks() {
                 <Image
                   src={step.image}
                   alt={step.alt}
-                  width={400}
-                  height={240}
-                  loading="lazy"
-                  decoding="async"
-                  className="mt-6 h-[240px] w-full max-w-[400px] rounded-m border border-line object-cover"
+                  sizes="400px"
+                  placeholder="blur"
+                  className="mt-6 h-[240px] w-full max-w-[400px] rounded-m border border-line bg-paper object-cover"
                 />
               </article>
             </li>

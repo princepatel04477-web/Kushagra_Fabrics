@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * One line in the bag: the small closed box illustration, box name, fabric
+ * One line in the bag: the cloth in the box (a small FabricTrio), box name, fabric
  * names, occasion and recipient, a quantity stepper (1–50), remove, and the
  * line price.
  */
 
-import { GiftBox } from "@/components/boxes/GiftBox";
+import { FabricTrio } from "@/components/boxes/FabricTrio";
 import { getBox, getFabric, getOccasion, type Fabric } from "@/lib/data";
 import { formatINR } from "@/lib/format";
 import {
@@ -78,7 +78,7 @@ export function BagLine({ line }: { readonly line: BagLineData }) {
   return (
     <li className="flex flex-col gap-4 border-b border-line py-5 first:pt-0 last:border-b-0">
       <div className="flex gap-4">
-        <GiftBox size="sm" stage="closed" className="w-20 shrink-0 self-start" />
+        <FabricTrio ids={line.fabricIds} size={48} className="self-start" />
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <p className="font-medium text-suiting">{boxName}</p>
           <p className="text-[0.9375rem] text-chalk">

@@ -26,78 +26,79 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import gsap from "gsap";
 import { useReducedMotion } from "motion/react";
 
 import { SectionShell } from "@/components/sections/SectionShell";
+import { getFabric } from "@/lib/data";
 
 interface Garment {
   readonly caption: string;
-  readonly image: string;
+  readonly image: StaticImageData;
   readonly alt: string;
 }
 
+/** The photo of a swatch-book cloth, by id. */
+function cloth(id: string): StaticImageData {
+  const fabric = getFabric(id);
+  if (fabric === undefined) throw new Error(`Unknown fabric: ${id}`);
+  return fabric.image;
+}
+
+// TODO(client): these cards show the cloth each garment was cut from. Swap in
+// photos of the finished garments (with the customers' permission) when the
+// shoot in docs/PHOTO_SHOT_LIST.md is done.
 const GARMENTS: readonly Garment[] = [
   {
     caption: "Wedding sherwani in Bottle green velvet",
-    image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=600&auto=format&fit=crop",
-    alt: "Groom in a dark formal outfit at his wedding",
+    image: cloth("bottle-green-velvet"),
+    alt: "Bottle green velvet, folded — the cloth this garment is cut from",
   },
   {
     caption: "Office shirt in Bengal stripe",
-    image:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600&auto=format&fit=crop",
-    alt: "A crisp shirt laid flat",
+    image: cloth("bengal-stripe"),
+    alt: "Bengal stripe, folded — the cloth this garment is cut from",
   },
   {
     caption: "Three-piece suit in Charcoal herringbone",
-    image:
-      "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=600&auto=format&fit=crop",
-    alt: "A man in a dark tailored suit",
+    image: cloth("charcoal-herringbone"),
+    alt: "Charcoal herringbone, folded — the cloth this garment is cut from",
   },
   {
     caption: "Summer kurta in Ivory linen",
-    image:
-      "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?q=80&w=600&auto=format&fit=crop",
-    alt: "Light summer clothing arranged on a bed",
+    image: cloth("ivory-linen"),
+    alt: "Ivory linen, folded — the cloth this garment is cut from",
   },
   {
     caption: "First boardroom suit in Navy twill",
-    image:
-      "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=600&auto=format&fit=crop",
-    alt: "Tailored jackets hanging in a row",
+    image: cloth("navy-twill"),
+    alt: "Navy twill, folded — the cloth this garment is cut from",
   },
   {
     caption: "Sangeet shirt in Sky end-on-end",
-    image:
-      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=600&auto=format&fit=crop",
-    alt: "A light shirt photographed close up",
+    image: cloth("sky-end-on-end"),
+    alt: "Sky end-on-end, folded — the cloth this garment is cut from",
   },
   {
     caption: "Weekend trousers in Sandstone chino",
-    image:
-      "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=600&auto=format&fit=crop",
-    alt: "Folded lengths of cloth in soft colours",
+    image: cloth("sandstone-chino"),
+    alt: "Sandstone chino, folded — the cloth this garment is cut from",
   },
   {
     caption: "Reception bandhgala in Charcoal herringbone",
-    image:
-      "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=600&auto=format&fit=crop",
-    alt: "Formal wear displayed in a tailor's shop",
+    image: cloth("charcoal-herringbone"),
+    alt: "Charcoal herringbone, folded — the cloth this garment is cut from",
   },
   {
     caption: "Anniversary dinner shirt in Oxford white",
-    image:
-      "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?q=80&w=600&auto=format&fit=crop",
-    alt: "A gift box with a shirt and ribbon",
+    image: cloth("oxford-white"),
+    alt: "Oxford white, folded — the cloth this garment is cut from",
   },
   {
     caption: "Diwali jacket in Navy twill",
-    image:
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=600&auto=format&fit=crop",
-    alt: "A freshly stitched garment folded neatly",
+    image: cloth("navy-twill"),
+    alt: "Navy twill, folded — the cloth this garment is cut from",
   },
 ];
 
@@ -307,7 +308,7 @@ export function MadeGallery() {
     <SectionShell
       id="made"
       heading="What he made of it"
-      intro="Every one of these started as a length of cloth in a Kushagra box."
+      intro="Every length is cut with a garment in mind. Here is the cloth, and what it becomes."
       contentClassName="relative left-1/2 w-screen max-w-full -translate-x-1/2 overflow-hidden"
     >
       <div
@@ -335,12 +336,10 @@ export function MadeGallery() {
             <Image
               src={garment.image}
               alt={garment.alt}
-              width={CARD_W}
-              height={400}
-              loading="lazy"
-              decoding="async"
+              sizes="300px"
+              placeholder="blur"
               draggable={false}
-              className="h-[400px] w-[300px] rounded-m border border-line object-cover"
+              className="h-[400px] w-[300px] rounded-m border border-line bg-paper object-cover"
             />
             <p className="mt-3 text-center text-[0.9375rem] text-chalk">
               {garment.caption}

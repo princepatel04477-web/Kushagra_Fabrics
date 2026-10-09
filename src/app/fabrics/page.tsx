@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { SwatchBook } from "@/components/fabrics/SwatchBook";
+import { FabricGrid } from "@/components/fabrics/FabricGrid";
 
 export const metadata: Metadata = {
   title: "Shirting and suiting fabrics",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function FabricsPage() {
   return (
     <main id="main" tabIndex={-1}>
-      <SwatchBook headingLevel={1} />
+      <FabricGrid headingLevel={1} />
     </main>
   );
 }

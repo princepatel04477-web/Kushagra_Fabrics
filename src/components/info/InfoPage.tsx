@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image, { type StaticImageData } from "next/image";
 
 import { NavLink } from "@/components/chrome/NavLink";
 import { cn } from "@/lib/cn";
@@ -22,6 +23,7 @@ interface InfoPageProps {
   readonly href: InfoHref;
   readonly title: string;
   readonly intro: string;
+  readonly image?: { readonly src: StaticImageData; readonly alt: string };
   readonly children: ReactNode;
 }
 
@@ -30,7 +32,13 @@ interface InfoPageProps {
  * the text under it in the same seven, and the list of the other help pages
  * in columns 10–12. Left and off-centre, like the rest of the site.
  */
-export function InfoPage({ href, title, intro, children }: InfoPageProps) {
+export function InfoPage({
+  href,
+  title,
+  intro,
+  image,
+  children,
+}: InfoPageProps) {
   return (
     <main id="main" tabIndex={-1}>
       <section aria-labelledby="info-heading" className="page-top">
@@ -40,6 +48,18 @@ export function InfoPage({ href, title, intro, children }: InfoPageProps) {
               {title}
             </h1>
             <p className="text-[1.0625rem] text-chalk">{intro}</p>
+            {image !== undefined ? (
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-m border border-line bg-paper">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(min-width: 1320px) 730px, (min-width: 1024px) 58vw, 100vw"
+                  placeholder="blur"
+                  className="object-cover"
+                />
+              </div>
+            ) : null}
           </div>
 
           <div className="col-span-12 mt-14 flex flex-col gap-10 lg:col-span-7">

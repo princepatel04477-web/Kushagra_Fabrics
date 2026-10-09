@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Class names live in src/. Prose docs are not scanned: a Windows path such as
+   `...\94ddb23a-...` in a markdown file is read as a CSS escape and crashes
+   Tailwind ("Invalid code point"). */
+@source not "../../docs";
+@source not "../../AGENTS.md";
+@source not "../../KUSHAGRA_ARENA_PHASES.md";
+
 /* ---------------------------------------------------------------------------
    Kushagra design tokens
    Every value here is mirrored in src/lib/tokens.ts for JS animation code.
@@ -166,14 +173,14 @@
 }
 
 @utility section-pad {
-  padding-block: clamp(96px, 14vw, 180px);
+  padding-block: clamp(72px, 9vw, 128px);
 }
 
 /* section-pad for the first section of a route: the top clears the floating
    nav (20px + 72px) with the same air the home hero gets. */
 @utility page-top {
-  padding-top: clamp(150px, 16vw, 220px);
-  padding-bottom: clamp(96px, 14vw, 180px);
+  padding-top: clamp(132px, 13vw, 176px);
+  padding-bottom: clamp(72px, 9vw, 128px);
 }
 
 @utility stack-s {
@@ -192,6 +199,101 @@
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Buttons — one shared look. All pills, 48px tall, Cabin 500 16px, no arrows
+   or glyphs in the label.
+   .btn-primary  red-deep fill: the single primary action in view
+   .btn-solid    suiting fill: a calm solid action
+   .btn-outline  1px suiting border, fills with suiting on hover
+--------------------------------------------------------------------------- */
+
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  padding-inline: 1.5rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-red-deep);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition: opacity 0.3s var(--ease-tailor);
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+}
+
+@utility btn-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  padding-inline: 1.5rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-suiting);
+  color: var(--color-shirting);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition: opacity 0.3s var(--ease-tailor);
+
+  &:hover {
+    opacity: 0.88;
+  }
+}
+
+@utility btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  padding-inline: 1.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-suiting);
+  color: var(--color-suiting);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color 0.3s var(--ease-tailor),
+    color 0.3s var(--ease-tailor);
+
+  &:hover {
+    background-color: var(--color-suiting);
+    color: var(--color-shirting);
+  }
+}
+
+/* A quiet text link: underlined in --color-line, darker on hover. */
+@utility link-quiet {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  width: fit-content;
+  color: var(--color-suiting);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--color-line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+  transition: text-decoration-color 0.3s var(--ease-tailor);
+
+  &:hover {
+    text-decoration-color: var(--color-suiting);
+  }
 }
 
 /* The dashed stitch line. Thread colour, never text. */
@@ -217,18 +319,6 @@
     transparent 9px,
     transparent 18px
   );
-}
-
-/* ---------------------------------------------------------------------------
-   Logo loop — the corporate client marquee.
-   The track holds two identical copies and shifts by exactly one copy width
-   (--loop-shift, set from JS measurements), so the loop is seamless.
---------------------------------------------------------------------------- */
-
-@keyframes logo-loop {
-  to {
-    transform: translate3d(var(--loop-shift, -50%), 0, 0);
-  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -384,6 +474,19 @@ html[data-scroll-locked="true"] body {
   inset: 0;
 }
 
+/* The box's cast shadow, lying on the ground plane under the floor so it
+   turns and tilts with the box. Part of the drawing, not a UI drop shadow. */
+.hb-shadow {
+  inset: -9% -7% -13% -5%;
+  transform: translate3d(2%, 4%, -1px);
+  background-image: radial-gradient(
+    closest-side,
+    rgb(27 36 51 / 0.2),
+    rgb(27 36 51 / 0.07) 62%,
+    transparent
+  );
+}
+
 .hb-liner {
   inset: 3%;
   transform: translateZ(1px);
@@ -494,13 +597,14 @@ html[data-scroll-locked="true"] body {
   top: 3%;
   width: 47%;
   height: 94%;
-  background-color: rgb(247 248 250 / 0.92);
-  background-image: linear-gradient(
-    115deg,
-    transparent 0 46%,
-    rgb(27 36 51 / 0.06) 46% 47%,
-    transparent 47%
-  );
+  /* Thin tissue: a touch translucent, with the soft creases of paper that
+     was folded once and opened again. */
+  background-color: rgb(247 248 250 / 0.9);
+  background-image:
+    linear-gradient(115deg, transparent 0 46%, rgb(27 36 51 / 0.06) 46% 46.6%, transparent 46.6%),
+    linear-gradient(72deg, transparent 0 63%, rgb(27 36 51 / 0.035) 63% 63.5%, transparent 63.5%),
+    linear-gradient(160deg, transparent 0 24%, rgb(255 255 255 / 0.7) 24% 25%, transparent 25%),
+    linear-gradient(90deg, rgb(27 36 51 / 0.05), transparent 18%);
   border: 1px solid var(--color-line);
 }
 
@@ -810,7 +914,55 @@ html[data-scroll-locked="true"] body {
     display: flex;
     align-items: center;
     padding-top: 92px;
-    opacity: calc(1 - var(--ribbon) * 2.5);
+    /* Leaves as the twill arrives to take the left two-thirds. */
+    opacity: calc(1 - var(--panel) * 5);
+  }
+
+  /* The intro and the four steps share one spot: the tagline hands over to
+     the steps as the ribbon slides off. */
+  .hero-intro-stack {
+    display: grid;
+  }
+
+  .hero-intro-stack > * {
+    grid-area: 1 / 1;
+    align-self: center;
+  }
+
+  .hero-tagline {
+    opacity: clamp(0, calc(1 - var(--ribbon) * 3), 1);
+    transform: translateY(calc(var(--ribbon) * -16px));
+  }
+
+  .hero-steps {
+    opacity: clamp(0, calc(var(--ribbon) * 3 - 0.6), 1);
+    transform: translateY(calc((1 - min(1, var(--ribbon) * 2)) * 16px));
+  }
+
+  /* Each step lights up with its own stage; its thread draws alongside. */
+  .hero-step {
+    opacity: calc(0.32 + 0.68 * var(--s));
+  }
+
+  .hero-step-thread {
+    transform: scaleX(var(--s));
+    transform-origin: 0 50%;
+  }
+
+  .hero-step:nth-child(1) {
+    --s: var(--ribbon);
+  }
+
+  .hero-step:nth-child(2) {
+    --s: var(--lid);
+  }
+
+  .hero-step:nth-child(3) {
+    --s: var(--tissue);
+  }
+
+  .hero-step:nth-child(4) {
+    --s: var(--unfold);
   }
 
   .hero-scene {
@@ -824,8 +976,8 @@ html[data-scroll-locked="true"] body {
     place-items: center;
     padding-top: 92px;
     transform:
-      translateX(calc(var(--panel) * 7vw))
-      scale(calc(1 - var(--panel) * 0.2));
+      translateX(calc(var(--panel) * 8.5vw))
+      scale(calc(1 - var(--panel) * 0.3));
   }
 
   .hero-scene .hb {
@@ -854,6 +1006,25 @@ html[data-scroll-locked="true"] body {
         calc(var(--psy, 0.4) + (1 - var(--psy, 0.4)) * var(--panel))
       );
     opacity: min(1, calc(var(--panel) * 6));
+  }
+
+  /* A tacking stitch down the cloth's cut edge, sewn in once the cloth has
+     settled and the headline is setting. */
+  .hero-panel::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 22px;
+    width: 2px;
+    background-image: repeating-linear-gradient(
+      180deg,
+      var(--color-thread) 0 9px,
+      transparent 9px 17px
+    );
+    opacity: clamp(0, calc(var(--type) * 2 - 0.6), 1);
+    transform: scaleY(var(--type));
+    transform-origin: 50% 0;
   }
 
   .hero-copy {
@@ -927,6 +1098,7 @@ html[data-scroll-locked="true"] body {
     transform: translateY(48px);
   }
 }
+
 
 /* ---------------------------------------------------------------------------
    Reduced motion: every effect falls back to a static end state.

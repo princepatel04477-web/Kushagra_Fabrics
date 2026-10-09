@@ -48,8 +48,8 @@ export const layout = {
   shellMaxWidth: 1320,
   /** Side padding: clamp(20px, 5vw, 64px). */
   gutter: "clamp(20px, 5vw, 64px)",
-  /** Section padding: clamp(96px, 14vw, 180px). */
-  sectionPad: "clamp(96px, 14vw, 180px)",
+  /** Section padding: clamp(72px, 9vw, 128px). */
+  sectionPad: "clamp(72px, 9vw, 128px)",
   /** Distance from the viewport top to the floating nav bar, in px. */
   navTop: 20,
   /** Nav bar height at rest / after scrolling past the compact threshold. */

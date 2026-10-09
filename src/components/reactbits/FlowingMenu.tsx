@@ -22,7 +22,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 
 import { cn } from "@/lib/cn";
@@ -35,7 +35,7 @@ export interface FlowingMenuItem {
   /** One line shown on the right of the row. */
   readonly line: string;
   /** Small photo tiles alternating with the name inside the band. */
-  readonly images: readonly string[];
+  readonly images: readonly StaticImageData[];
 }
 
 export interface FlowingMenuProps {
@@ -73,30 +73,30 @@ function useCoarsePointer(): boolean {
 }
 
 /** One half of the marquee — duplicated so the -50% loop is seamless. */
-function MarqueeGroup({ text, images }: { readonly text: string; readonly images: readonly string[] }) {
+function MarqueeGroup({ text, images }: { readonly text: string; readonly images: readonly StaticImageData[] }) {
   return (
-    <span className="flex items-center gap-6 pr-6">
+    <span className="flex shrink-0 items-center gap-8 pr-8">
       <MarqueeText text={text} />
-      {images.map((src) => (
+      {images.map((image) => (
         <Image
-          key={src}
-          src={src}
+          key={image.src}
+          src={image}
           alt=""
           width={56}
           height={56}
+          sizes="56px"
           loading="lazy"
           decoding="async"
-          className="h-14 w-14 rounded-s object-cover"
+          className="h-14 w-14 shrink-0 rounded-s object-cover"
         />
       ))}
-      <MarqueeText text={text} />
     </span>
   );
 }
 
 function MarqueeText({ text }: { readonly text: string }) {
   return (
-    <span className="whitespace-nowrap font-display text-[clamp(1.5rem,3vw,2.5rem)] leading-none tracking-[-0.02em] text-shirting">
+    <span className="shrink-0 whitespace-nowrap font-display text-[clamp(1.5rem,3vw,2.5rem)] leading-none tracking-[-0.02em] text-shirting">
       {text}
     </span>
   );
@@ -150,7 +150,7 @@ function FlowingMenuRow({ item, selected, onSelect }: FlowingMenuRowProps) {
           revealedByTouch.current = false;
         }}
         onClick={handleSelect}
-        className="relative flex w-full flex-wrap items-baseline justify-between gap-x-8 gap-y-2 overflow-hidden border-t border-line py-7 text-left"
+        className="relative flex w-full flex-wrap items-baseline justify-between gap-x-8 gap-y-2 overflow-hidden border-t border-line py-6 text-left"
       >
         <span className="flex items-baseline gap-4">
           <span className="font-display text-[clamp(2rem,5vw,4rem)] leading-[1.02] tracking-[-0.02em] text-suiting">

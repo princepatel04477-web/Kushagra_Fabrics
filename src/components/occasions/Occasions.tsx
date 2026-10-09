@@ -5,51 +5,35 @@
  * stores it on the draft gift and opens /build.
  */
 
+import type { StaticImageData } from "next/image";
+
 import { SectionShell } from "@/components/sections/SectionShell";
 import {
   FlowingMenu,
   type FlowingMenuItem,
 } from "@/components/reactbits/FlowingMenu";
-import { occasions } from "@/lib/data";
+import { getFabric, occasions } from "@/lib/data";
 import { useNavigate } from "@/lib/useNavigate";
 import { useGiftStore } from "@/store/gift";
 
 /**
- * Photo tiles for the marquee band — fabric, tailoring and gift boxes, one
- * set per occasion.
+ * Fabric tiles for the marquee band, three per occasion — our own cloth,
+ * shown close up.
  */
-const OCCASION_IMAGES: Readonly<Record<string, readonly string[]>> = {
-  "raksha-bandhan": [
-    "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=240&auto=format&fit=crop",
-  ],
-  wedding: [
-    "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=240&auto=format&fit=crop",
-  ],
-  diwali: [
-    "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=240&auto=format&fit=crop",
-  ],
-  "fathers-day": [
-    "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=240&auto=format&fit=crop",
-  ],
-  anniversary: [
-    "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=240&auto=format&fit=crop",
-  ],
-  corporate: [
-    "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=240&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=240&auto=format&fit=crop",
-  ],
+const OCCASION_FABRICS: Readonly<Record<string, readonly string[]>> = {
+  "raksha-bandhan": ["oxford-white", "bengal-stripe", "sky-end-on-end"],
+  wedding: ["bottle-green-velvet", "charcoal-herringbone", "navy-twill"],
+  diwali: ["bottle-green-velvet", "ivory-linen", "navy-twill"],
+  "fathers-day": ["oxford-white", "sandstone-chino", "charcoal-herringbone"],
+  anniversary: ["navy-twill", "sky-end-on-end", "bottle-green-velvet"],
+  corporate: ["oxford-white", "sky-end-on-end", "sandstone-chino"],
 };
+
+function imagesFor(occasionId: string): StaticImageData[] {
+  return (OCCASION_FABRICS[occasionId] ?? [])
+    .map((id) => getFabric(id)?.image)
+    .filter((image): image is StaticImageData => image !== undefined);
+}
 
 export function Occasions() {
   const setOccasion = useGiftStore((state) => state.setOccasion);
@@ -60,7 +44,7 @@ export function Occasions() {
     id: occasion.id,
     text: occasion.name,
     line: occasion.line,
-    images: OCCASION_IMAGES[occasion.id] ?? [],
+    images: imagesFor(occasion.id),
   }));
 
   const handleSelect = (id: string) => {

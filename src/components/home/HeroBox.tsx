@@ -1,8 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties, Ref } from "react";
 
-import { fabricTextureStyle } from "@/components/fabrics/FabricTexture";
-import { getFabric } from "@/lib/data";
 import { cn } from "@/lib/cn";
 
 /**
@@ -53,10 +51,24 @@ export function heroStageStyle(stage: HeroStage): CSSVars {
   };
 }
 
-const twill = getFabric("navy-twill");
-/** The cloth in the box is the navy twill from the swatch book. */
-export const heroTwillStyle: CSSProperties =
-  twill === undefined ? {} : fabricTextureStyle(twill);
+/**
+ * The cloth in the box is the navy twill from the swatch book, drawn rather
+ * than photographed so it stays crisp and seamless at every size — from the
+ * folded bundle to the panel that fills two-thirds of the screen. Layers, top
+ * to bottom: window light falling off from the top left, shade gathering at
+ * the bottom right, the twill rib at its true 63° (a lit ridge, then its
+ * shadow), and a faint horizontal weft. These gradients are the cloth itself
+ * — the sanctioned exception to the no-gradient rule.
+ */
+export const heroTwillStyle: CSSProperties = {
+  backgroundColor: "#253148",
+  backgroundImage: [
+    "radial-gradient(120% 90% at 18% 8%, rgb(255 255 255 / 0.07), transparent 60%)",
+    "radial-gradient(110% 90% at 92% 100%, rgb(0 0 0 / 0.28), transparent 62%)",
+    "repeating-linear-gradient(63deg, rgb(255 255 255 / 0.075) 0 1.5px, rgb(0 0 0 / 0.14) 1.5px 2.5px, transparent 2.5px 5px)",
+    "repeating-linear-gradient(0deg, rgb(255 255 255 / 0.025) 0 1px, transparent 1px 3px)",
+  ].join(", "),
+};
 
 interface HeroBoxProps {
   readonly className?: string;
@@ -71,6 +83,7 @@ export function HeroBox({ className, style, unfoldRef, priority }: HeroBoxProps)
   return (
     <div className={cn("hb", className)} style={style} aria-hidden="true">
       <div className="hb-rig">
+        <div className="hb-shadow" />
         <div className="hb-face hb-floor" />
         <div className="hb-liner" />
         <div className="hb-bundle" style={heroTwillStyle} />

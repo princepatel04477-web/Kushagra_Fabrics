@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { NavLink } from "@/components/chrome/NavLink";
 import { InfoBlock, InfoPage, infoLinkClass } from "@/components/info/InfoPage";
+import herringbone from "@/assets/photos/fabric-herringbone.jpg";
 
 export const metadata: Metadata = {
   title: "About",
@@ -16,6 +17,7 @@ export default function AboutPage() {
       href="/about"
       title="About Kushagra"
       intro="Select • Stitch • Stand Out. A gift for men that fits, because his own tailor cuts it."
+      image={{ src: herringbone, alt: "Charcoal herringbone wool, folded" }}
     >
       <p className="text-chalk">
         Kushagra started in Surat, Gujarat, where India&apos;s cloth is woven,

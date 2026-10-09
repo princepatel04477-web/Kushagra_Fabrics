@@ -4,13 +4,25 @@
  * Prices are integer rupees — see src/lib/format.ts. Box prices cover the box
  * itself (packaging, ribbon, note card); fabric prices are added on top.
  *
- * Each fabric also carries a `texture` key (drawn in CSS by
- * src/components/fabrics/FabricTexture.tsx) and a one-line `wear` note for
- * the swatch book's details panel.
+ * Each fabric carries a statically imported `image` (src/assets/photos, 4:5)
+ * and a one-line `wear` note for its card. Each box carries `preview`, the
+ * ids of the fabrics shown in its FabricTrio — illustrative, not a promise of
+ * what is inside.
  *
  * Contents of a box (what each slot holds, gift-wrap variants and so on) are
  * filled in by later phases. The types are final.
  */
+
+import type { StaticImageData } from "next/image";
+
+import oxfordImage from "@/assets/photos/fabric-oxford.jpg";
+import stripeImage from "@/assets/photos/fabric-stripe.jpg";
+import endOnEndImage from "@/assets/photos/fabric-endonend.jpg";
+import linenImage from "@/assets/photos/fabric-linen.jpg";
+import twillImage from "@/assets/photos/fabric-twill.jpg";
+import herringboneImage from "@/assets/photos/fabric-herringbone.jpg";
+import velvetImage from "@/assets/photos/fabric-velvet.jpg";
+import chinoImage from "@/assets/photos/fabric-chino.jpg";
 
 export type FabricKind = "shirting" | "suiting";
 
@@ -61,17 +73,6 @@ export const occasions: readonly Occasion[] = [
 
 /* --------------------------------------------------------------- fabrics -- */
 
-/** Texture keys rendered by src/components/fabrics/FabricTexture.tsx. */
-export type FabricTextureId =
-  | "oxford"
-  | "stripe"
-  | "endonend"
-  | "linen"
-  | "twill"
-  | "herringbone"
-  | "velvet"
-  | "chino";
-
 /** What one length of the cloth is cut for — the label shown in the UI. */
 export type FabricLengthLabel = "shirt" | "suit" | "bandhgala" | "trouser";
 
@@ -95,8 +96,8 @@ export interface Fabric {
   readonly lengthM: number;
   /** One line on how the cloth wears. */
   readonly wear: string;
-  /** CSS texture key, drawn by FabricTexture. */
-  readonly texture: FabricTextureId;
+  /** Photograph of the folded cloth, 4:5. */
+  readonly image: StaticImageData;
   /** Price for one length, in integer rupees. */
   readonly priceInr: number;
 }
@@ -112,7 +113,7 @@ export const fabrics: readonly Fabric[] = [
     lengthLabel: "shirt",
     lengthM: 1.6,
     wear: "Crisp for office mornings, softens beautifully after a few washes.",
-    texture: "oxford",
+    image: oxfordImage,
     priceInr: 1800,
   },
   {
@@ -125,7 +126,7 @@ export const fabrics: readonly Fabric[] = [
     lengthLabel: "shirt",
     lengthM: 1.6,
     wear: "A quiet stripe that reads as solid from across the room.",
-    texture: "stripe",
+    image: stripeImage,
     priceInr: 2200,
   },
   {
@@ -138,7 +139,7 @@ export const fabrics: readonly Fabric[] = [
     lengthLabel: "shirt",
     lengthM: 1.6,
     wear: "The finest shirting we stock — the collar rolls exactly where it should.",
-    texture: "endonend",
+    image: endOnEndImage,
     priceInr: 2600,
   },
   {
@@ -151,7 +152,7 @@ export const fabrics: readonly Fabric[] = [
     lengthLabel: "shirt",
     lengthM: 1.6,
     wear: "Open and airy; it creases by lunch and looks better for it.",
-    texture: "linen",
+    image: linenImage,
     priceInr: 3400,
   },
   {
@@ -164,7 +165,7 @@ export const fabrics: readonly Fabric[] = [
     lengthLabel: "suit",
     lengthM: 3.25,
     wear: "Holds a crease from the morning meeting to the last train home.",
-    texture: "twill",
+    image: twillImage,
     priceInr: 6800,
   },
   {
@@ -177,7 +178,7 @@ export const fabrics: readonly Fabric[] = [
     lengthLabel: "suit",
     lengthM: 3.25,
     wear: "The zigzag does the talking, so the jacket does not have to.",
-    texture: "herringbone",
+    image: herringboneImage,
     priceInr: 7200,
   },
   {
@@ -190,7 +191,7 @@ export const fabrics: readonly Fabric[] = [
     lengthLabel: "bandhgala",
     lengthM: 2.5,
     wear: "Heavy, quiet and deep — cut for bandhgalas and evening rooms.",
-    texture: "velvet",
+    image: velvetImage,
     priceInr: 7800,
   },
   {
@@ -203,7 +204,7 @@ export const fabrics: readonly Fabric[] = [
     lengthLabel: "trouser",
     lengthM: 1.3,
     wear: "Soft enough for Sundays, tough enough for every weekday between.",
-    texture: "chino",
+    image: chinoImage,
     priceInr: 2400,
   },
 ];
@@ -231,6 +232,8 @@ export interface BoxTier {
   readonly includes: readonly string[];
   /** Who this box is for. */
   readonly bestFor: string;
+  /** Fabric ids shown in the box's FabricTrio — illustrative contents. */
+  readonly preview: readonly string[];
 }
 
 export const boxes: readonly BoxTier[] = [
@@ -247,6 +250,7 @@ export const boxes: readonly BoxTier[] = [
       "Red grosgrain ribbon, hand-tied",
     ],
     bestFor: "Rakhi, Diwali and every shirt he is missing",
+    preview: ["oxford-white", "bengal-stripe"],
   },
   {
     id: "suit-box",
@@ -265,6 +269,7 @@ export const boxes: readonly BoxTier[] = [
       "Red grosgrain ribbon, hand-tied",
     ],
     bestFor: "Weddings, and the first suit he owns outright",
+    preview: ["navy-twill", "sky-end-on-end"],
   },
   {
     id: "grooms-trunk",
@@ -284,6 +289,7 @@ export const boxes: readonly BoxTier[] = [
       "Care note for his tailor",
     ],
     bestFor: "The groom, the baraat and the father of the bride",
+    preview: ["charcoal-herringbone", "oxford-white", "ivory-linen"],
   },
 ];
 
