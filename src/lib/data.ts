@@ -4,6 +4,10 @@
  * Prices are integer rupees — see src/lib/format.ts. Box prices cover the box
  * itself (packaging, ribbon, note card); fabric prices are added on top.
  *
+ * Each fabric also carries a `texture` key (drawn in CSS by
+ * src/components/fabrics/FabricTexture.tsx) and a one-line `wear` note for
+ * the swatch book's details panel.
+ *
  * Contents of a box (what each slot holds, gift-wrap variants and so on) are
  * filled in by later phases. The types are final.
  */
@@ -18,194 +22,189 @@ export interface Occasion {
   readonly id: string;
   /** Sentence case, as it appears on the card. */
   readonly name: string;
-  /** Who usually gives this gift. */
-  readonly giver: string;
-  /** One line explaining the occasion. */
+  /** One line written for the day — shown beside the name and on the card. */
   readonly line: string;
-  /** Rough time of year, used for ordering cards. */
-  readonly when: string;
-  /** Fabric kinds that suit this occasion best. */
-  readonly suggested: readonly FabricKind[];
 }
 
 export const occasions: readonly Occasion[] = [
   {
     id: "raksha-bandhan",
     name: "Raksha Bandhan",
-    giver: "Sisters",
-    line: "She ties the thread in August. He is still wearing the shirt in March.",
-    when: "August",
-    suggested: ["shirting"],
+    line: "From a sister, for the brother who has everything.",
   },
   {
-    id: "wedding-season",
-    name: "Wedding season",
-    giver: "Families",
-    line: "For the brothers, uncles and grooms who need one good suit they own outright.",
-    when: "November to February",
-    suggested: ["suiting"],
+    id: "wedding",
+    name: "Wedding",
+    line: "For the groom, the baraat and the father of the bride.",
   },
   {
     id: "diwali",
     name: "Diwali",
-    giver: "Families and hosts",
-    line: "A box that is not sweets, not dry fruit, and not forgotten by the next Diwali.",
-    when: "October to November",
-    suggested: ["shirting", "suiting"],
+    line: "A festive box that outlasts the sweets.",
+  },
+  {
+    id: "fathers-day",
+    name: "Father's Day",
+    line: "For the man who taught you how to dress.",
   },
   {
     id: "anniversary",
-    name: "Anniversaries",
-    giver: "Wives and partners",
-    line: "He has the watch. Give him the shirt that fits because his tailor cut it.",
-    when: "Any week of the year",
-    suggested: ["shirting", "suiting"],
+    name: "Anniversary",
+    line: "Something he'll wear to the next one.",
   },
   {
-    id: "milestone",
-    name: "Milestones",
-    giver: "Parents and teams",
-    line: "A first job, a promotion, a certificate — cloth for the year that follows it.",
-    when: "Whenever it happens",
-    suggested: ["shirting"],
+    id: "corporate",
+    name: "Corporate",
+    line: "Boxes for your team, with your note inside.",
   },
 ];
 
 /* --------------------------------------------------------------- fabrics -- */
 
-export interface FabricColour {
-  readonly name: string;
-  readonly hex: string;
-}
+/** Texture keys rendered by src/components/fabrics/FabricTexture.tsx. */
+export type FabricTextureId =
+  | "oxford"
+  | "stripe"
+  | "endonend"
+  | "linen"
+  | "twill"
+  | "herringbone"
+  | "velvet"
+  | "chino";
+
+/** What one length of the cloth is cut for — the label shown in the UI. */
+export type FabricLengthLabel = "shirt" | "suit" | "bandhgala" | "trouser";
 
 export interface Fabric {
   readonly id: string;
   readonly name: string;
   readonly kind: FabricKind;
-  /** Mill or region, for the fabric card. */
-  readonly mill: string;
+  /** Mill composition, e.g. "100% cotton" or "70% wool 30% poly". */
   readonly composition: string;
-  /** Grams per square metre. */
-  readonly gsm: number;
-  readonly weave: string;
-  /** How the cloth feels, in the hand. */
-  readonly hand: string;
-  readonly care: string;
+  /** Yarn count ("2/40s", "60 lea"), or null when the cloth is quoted by weight. */
+  readonly count: string | null;
+  /** Fabric weight ("260 gsm"), or null when the cloth is quoted by count. */
+  readonly weight: string | null;
+  /**
+   * What one length is cut for. Sandstone chino is cut as a trouser length but
+   * is a shirting cloth, so its kind stays "shirting" and only this label
+   * reads "trouser".
+   */
+  readonly lengthLabel: FabricLengthLabel;
+  /** Length of one cut, in metres. */
+  readonly lengthM: number;
+  /** One line on how the cloth wears. */
+  readonly wear: string;
+  /** CSS texture key, drawn by FabricTexture. */
+  readonly texture: FabricTextureId;
   /** Price for one length, in integer rupees. */
   readonly priceInr: number;
-  readonly colours: readonly FabricColour[];
-  /** Occasions this cloth suits. */
-  readonly occasionIds: readonly string[];
 }
 
 export const fabrics: readonly Fabric[] = [
   {
-    id: "morning-poplin",
-    name: "Morning poplin",
+    id: "oxford-white",
+    name: "Oxford white",
     kind: "shirting",
-    mill: "Coimbatore",
-    composition: "100% long-staple cotton",
-    gsm: 110,
-    weave: "Plain",
-    hand: "Crisp and cool, with the dry snap of a well-ironed shirt.",
-    care: "Machine wash cold, line dry, iron damp.",
-    priceInr: 2100,
-    colours: [
-      { name: "Optic white", hex: "#F5F7F9" },
-      { name: "Sky chalk", hex: "#C9DCEC" },
-      { name: "Pencil stripe", hex: "#8FA3B8" },
-    ],
-    occasionIds: ["raksha-bandhan", "diwali", "anniversary", "milestone"],
+    composition: "100% cotton",
+    count: "2/40s",
+    weight: null,
+    lengthLabel: "shirt",
+    lengthM: 1.6,
+    wear: "Crisp for office mornings, softens beautifully after a few washes.",
+    texture: "oxford",
+    priceInr: 1800,
   },
   {
-    id: "evening-oxford",
-    name: "Evening oxford",
+    id: "bengal-stripe",
+    name: "Bengal stripe",
     kind: "shirting",
-    mill: "Ahmedabad",
-    composition: "92% cotton, 8% linen",
-    gsm: 140,
-    weave: "Oxford",
-    hand: "Soft from the first wear, with a faint basket texture under the thumb.",
-    care: "Machine wash cold, tumble low, iron warm.",
-    priceInr: 2450,
-    colours: [
-      { name: "Washed indigo", hex: "#4C6285" },
-      { name: "Warm sand", hex: "#D9C7AD" },
-      { name: "Charcoal chalk", hex: "#5E6773" },
-    ],
-    occasionIds: ["raksha-bandhan", "anniversary", "milestone"],
+    composition: "100% cotton",
+    count: "2/60s",
+    weight: null,
+    lengthLabel: "shirt",
+    lengthM: 1.6,
+    wear: "A quiet stripe that reads as solid from across the room.",
+    texture: "stripe",
+    priceInr: 2200,
   },
   {
-    id: "summer-linen-club",
-    name: "Summer linen club",
+    id: "sky-end-on-end",
+    name: "Sky end-on-end",
     kind: "shirting",
-    mill: "Belgian flax, woven in Erode",
-    composition: "100% European linen",
-    gsm: 165,
-    weave: "Plain, slubbed",
-    hand: "Open and airy. It creases by lunch and looks better for it.",
-    care: "Machine wash cold, do not spin dry, iron damp.",
-    priceInr: 3200,
-    colours: [
-      { name: "Raw flax", hex: "#E0D6C3" },
-      { name: "Sea glass", hex: "#AFC4C0" },
-      { name: "Faded rust", hex: "#B9774F" },
-    ],
-    occasionIds: ["diwali", "anniversary", "milestone"],
+    composition: "100% cotton",
+    count: "2/80s",
+    weight: null,
+    lengthLabel: "shirt",
+    lengthM: 1.6,
+    wear: "The finest shirting we stock — the collar rolls exactly where it should.",
+    texture: "endonend",
+    priceInr: 2600,
   },
   {
-    id: "boardroom-twill",
-    name: "Boardroom twill",
-    kind: "suiting",
-    mill: "Bhiwandi",
-    composition: "100% merino wool",
-    gsm: 260,
-    weave: "Two-ply twill",
-    hand: "Dry, dense and springy. It holds a crease through a ten-hour day.",
-    care: "Dry clean only. Brush after wear, rest a day.",
-    priceInr: 7900,
-    colours: [
-      { name: "Ink navy", hex: "#26303F" },
-      { name: "Graphite", hex: "#4A525C" },
-      { name: "Midnight black", hex: "#1B2433" },
-    ],
-    occasionIds: ["wedding-season", "milestone", "diwali"],
+    id: "ivory-linen",
+    name: "Ivory linen",
+    kind: "shirting",
+    composition: "100% linen",
+    count: "60 lea",
+    weight: null,
+    lengthLabel: "shirt",
+    lengthM: 1.6,
+    wear: "Open and airy; it creases by lunch and looks better for it.",
+    texture: "linen",
+    priceInr: 3400,
   },
   {
-    id: "reception-satin",
-    name: "Reception satin",
+    id: "navy-twill",
+    name: "Navy twill",
     kind: "suiting",
-    mill: "Surat",
-    composition: "70% wool, 30% silk",
-    gsm: 240,
-    weave: "Satin",
-    hand: "Cool and fluid with a low sheen that only shows under evening light.",
-    care: "Dry clean only. Press through a cotton cloth.",
-    priceInr: 9600,
-    colours: [
-      { name: "Deep maroon", hex: "#5B2230" },
-      { name: "Bottle green", hex: "#243B32" },
-      { name: "Midnight navy", hex: "#1F2A3D" },
-    ],
-    occasionIds: ["wedding-season", "diwali"],
+    composition: "70% wool 30% poly",
+    count: null,
+    weight: "260 gsm",
+    lengthLabel: "suit",
+    lengthM: 3.25,
+    wear: "Holds a crease from the morning meeting to the last train home.",
+    texture: "twill",
+    priceInr: 6800,
   },
   {
-    id: "travel-hopsack",
-    name: "Travel hopsack",
+    id: "charcoal-herringbone",
+    name: "Charcoal herringbone",
     kind: "suiting",
-    mill: "Bhiwandi",
-    composition: "98% merino wool, 2% elastane",
-    gsm: 280,
-    weave: "Hopsack",
-    hand: "Open weave, a little give, and it shakes creases out overnight.",
-    care: "Dry clean rarely. Steam in the bathroom, brush, rest.",
-    priceInr: 8400,
-    colours: [
-      { name: "Loden", hex: "#3F4A3A" },
-      { name: "Storm blue", hex: "#3B4B63" },
-      { name: "Warm taupe", hex: "#7A6E5F" },
-    ],
-    occasionIds: ["wedding-season", "anniversary", "milestone"],
+    composition: "80% wool 20% poly",
+    count: null,
+    weight: "280 gsm",
+    lengthLabel: "suit",
+    lengthM: 3.25,
+    wear: "The zigzag does the talking, so the jacket does not have to.",
+    texture: "herringbone",
+    priceInr: 7200,
+  },
+  {
+    id: "bottle-green-velvet",
+    name: "Bottle green velvet",
+    kind: "suiting",
+    composition: "cotton velvet",
+    count: null,
+    weight: "340 gsm",
+    lengthLabel: "bandhgala",
+    lengthM: 2.5,
+    wear: "Heavy, quiet and deep — cut for bandhgalas and evening rooms.",
+    texture: "velvet",
+    priceInr: 7800,
+  },
+  {
+    id: "sandstone-chino",
+    name: "Sandstone chino",
+    kind: "shirting",
+    composition: "98% cotton 2% elastane",
+    count: null,
+    weight: null,
+    lengthLabel: "trouser",
+    lengthM: 1.3,
+    wear: "Soft enough for Sundays, tough enough for every weekday between.",
+    texture: "chino",
+    priceInr: 2400,
   },
 ];
 
@@ -236,55 +235,55 @@ export interface BoxTier {
 
 export const boxes: readonly BoxTier[] = [
   {
-    id: "the-single",
-    name: "The Single",
-    line: "One length, one ribbon, one very good shirt.",
-    priceInr: 900,
-    slots: [{ kind: "any", count: 1, label: "One length of his cloth" }],
+    id: "shirt-box",
+    name: "The Shirt Box",
+    line: "Two shirt lengths of 1.6 m, wrapped and ribboned.",
+    priceInr: 2499,
+    slots: [{ kind: "shirting", count: 2, label: "Two shirting lengths" }],
     includes: [
-      "Rigid gift box in Kushagra suiting board",
+      "Two shirt lengths of 1.6 m",
+      "Gift card with your note",
+      "Care note for his tailor",
       "Red grosgrain ribbon, hand-tied",
-      "Note card in your words",
-      "Measuring tape and a care card",
     ],
-    bestFor: "A first gift, or a rakhi you have to post",
+    bestFor: "Rakhi, Diwali and every shirt he is missing",
   },
   {
-    id: "the-pair",
-    name: "The Pair",
-    line: "Two lengths — the weekday shirt and the one he keeps for dinners.",
-    priceInr: 1400,
+    id: "suit-box",
+    name: "The Suit Box",
+    line: "One suit length of 3.25 m and one shirt length.",
+    priceInr: 6999,
     slots: [
       { kind: "shirting", count: 1, label: "One shirting length" },
-      { kind: "any", count: 1, label: "One more, his choice" },
+      { kind: "suiting", count: 1, label: "One suiting length" },
     ],
     includes: [
-      "Rigid gift box in Kushagra suiting board",
+      "One suit length of 3.25 m",
+      "One shirt length of 1.6 m",
+      "Gift card with your note",
+      "Care note for his tailor",
       "Red grosgrain ribbon, hand-tied",
-      "Note card in your words",
-      "Measuring tape and a care card",
-      "Two cloth bags, one per length",
     ],
-    bestFor: "Anniversaries and Diwali, when one shirt is not quite enough",
+    bestFor: "Weddings, and the first suit he owns outright",
   },
   {
-    id: "the-wardrobe",
-    name: "The Wardrobe",
-    line: "Two shirting lengths and a suiting length. A season, boxed.",
-    priceInr: 2200,
+    id: "grooms-trunk",
+    name: "The Groom's Trunk",
+    line: "One suit length, two shirt lengths, a silk pocket square, in a keepsake trunk.",
+    priceInr: 14999,
     slots: [
       { kind: "shirting", count: 2, label: "Two shirting lengths" },
       { kind: "suiting", count: 1, label: "One suiting length" },
     ],
     includes: [
-      "Deep gift box in Kushagra suiting board",
-      "Red grosgrain ribbon, hand-tied",
-      "Note card in your words",
-      "Measuring tape and a care card",
-      "Three cloth bags, one per length",
-      "Tailor's instruction card with finished measurements",
+      "One suit length of 3.25 m",
+      "Two shirt lengths of 1.6 m",
+      "Silk pocket square",
+      "Keepsake wooden trunk",
+      "Gift card with your note",
+      "Care note for his tailor",
     ],
-    bestFor: "Weddings, milestone birthdays, and corporate gifting",
+    bestFor: "The groom, the baraat and the father of the bride",
   },
 ];
 

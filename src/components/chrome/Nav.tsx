@@ -12,10 +12,11 @@ import {
 
 import { useSmoothScroll } from "@/components/providers/SmoothScroll";
 import { PillNav, type PillNavItem } from "@/components/reactbits/PillNav";
-import { useBagCount } from "@/store/gift";
+import { useGiftStore, useBagCount } from "@/store/gift";
 import { cn } from "@/lib/cn";
 import { duration as tokenDuration, easeTailorBezier, layout } from "@/lib/tokens";
 
+import { BagDrawer } from "../bag/BagDrawer";
 import { MobileMenu } from "./MobileMenu";
 
 const NAV_ITEMS: readonly PillNavItem[] = [
@@ -58,6 +59,8 @@ function BagIcon() {
 export function Nav() {
   const { scrollTo, scrollToTop, start } = useSmoothScroll();
   const bagCount = useBagCount();
+  const bagOpen = useGiftStore((state) => state.bagOpen);
+  const openBag = useGiftStore((state) => state.openBag);
 
   const [compact, setCompact] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -170,10 +173,11 @@ export function Nav() {
         <div className="ml-auto flex items-center gap-2">
           <button
             type="button"
-            onClick={() => {
-              handleBarAction("#builder");
-            }}
+            data-bag-button
+            onClick={openBag}
             aria-label={bagLabel}
+            aria-haspopup="dialog"
+            aria-expanded={bagOpen ? "true" : undefined}
             className="relative grid h-10 w-10 shrink-0 place-items-center rounded-pill border border-line text-suiting transition-colors duration-300 hover:bg-suiting hover:text-shirting"
           >
             <BagIcon />
@@ -229,6 +233,8 @@ export function Nav() {
           </div>
         </div>
       </motion.nav>
+
+      <BagDrawer />
     </div>
   );
 }

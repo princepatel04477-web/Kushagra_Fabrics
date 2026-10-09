@@ -129,6 +129,13 @@ our tokens — React Bits' default colours must never survive contact with this 
 | ---------------- | ----------------------------------------------- | ----- | ------ |
 | `PillNav`        | `chrome/Nav.tsx` — floating bar, ≥ 900px        | 1     | ✅     |
 | `StaggeredMenu`  | `chrome/MobileMenu.tsx` — under 900px           | 1     | ✅     |
+| `FlowingMenu`    | `occasions/Occasions.tsx` — occasion rows, suiting marquee band | 3 | ✅ |
+| `Stack`          | `fabrics/SwatchBook.tsx` — draggable swatch pile | 3     | ✅     |
+| `GlareHover`     | `fabrics/SwatchBook.tsx` — sheen on the top swatch only | 3 | ✅ |
+| `TiltedCard`     | `boxes/BoxTiers.tsx` — box tier cards | 4     | ✅     |
+| `TextType`       | `builder/GiftCard.tsx` — the note card typing | 4     | ✅     |
+| `ClickSpark`     | `builder/Builder.tsx` — Add to bag sparks (thread colour) | 4 | ✅ |
+| `Magnet`         | `builder/Builder.tsx` — Add to bag magnetic pull | 4     | ✅     |
 
 Install with
 `npx shadcn@latest add https://reactbits.dev/r/<Name>-TS-TW`
@@ -140,8 +147,12 @@ and restyle before committing.
 
 ## 6. Data and money
 
-- `src/lib/data.ts` types the catalogue: `Occasion`, `Fabric` (`kind: 'shirting' | 'suiting'`),
+- `src/lib/data.ts` types the catalogue: `Occasion`, `Fabric` (`kind: 'shirting' | 'suiting'`,
+  plus a `texture` key drawn in CSS by `fabrics/FabricTexture.tsx` and a one-line `wear` note),
   `BoxTier` with slot rules. Later phases add contents to boxes, not new shapes.
+- Slot logic for the builder is pure and unit-testable in `src/lib/slots.ts`
+  (`canAdd`, `remaining`, `ruleString`, `missingString`, `blockedReason`). The builder chips,
+  the "Add to bag" guard and the box-change trimming all read from there.
 - **Prices are integer rupees.** Never floats, never paise.
 - Format with `formatINR()` from `src/lib/format.ts`. Never concatenate a `₹` by hand.
 - `src/store/gift.ts` holds the draft gift (occasion, box, fabrics, note) and the bag.
