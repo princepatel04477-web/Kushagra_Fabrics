@@ -86,10 +86,30 @@ bare `rounded-s` (logical start radius). Do not remove that rule.
 - 12-column shell: `.grid-shell` — `max-width: 1320px`,
   `padding-inline: clamp(20px, 5vw, 64px)`, `column-gap: clamp(16px, 2vw, 28px)`.
 - `.section-pad` — `padding-block: clamp(96px, 14vw, 180px)`.
+- `.page-top` — replaces `.section-pad` on the first section of a route
+  (`padding-top: clamp(150px, 16vw, 220px)`) so the `h1` clears the floating nav.
 - Content sits **left and slightly off-centre** — like folded cloth in a box. Headings
   take columns 1–7 (`lg:col-span-7`), content spans 12. The **only** centred symmetric
   layout on the site is the footer wordmark.
 - Below 900px the grid collapses to a single column.
+
+### Routes
+
+The site is multi-page. Do not fold pages back into anchors on `/`.
+
+| Route        | Contents                                                        |
+| ------------ | --------------------------------------------------------------- |
+| `/`          | Hero, occasions, how it works, what he made of it               |
+| `/fabrics`   | Swatch book (`SwatchBook headingLevel={1}`)                      |
+| `/boxes`     | Box tiers                                                       |
+| `/build`     | Gift builder. Reads `?box=&fabric=&fabric=&occasion=` (`BuildParams`) |
+| `/corporate` | Corporate gifting and bulk enquiry form                         |
+| `/about` `/faq` `/delivery` `/care` `/returns` `/contact` `/privacy` `/terms` | `InfoPage` shell |
+
+- A section rendered as its own route takes `headingLevel={1}` (one `h1` per page).
+- Nav, footer, bag drawer and preloader live in `layout.tsx` and persist across routes.
+- CTAs that "go to the builder" set the store and `navigate("/build")`; the draft gift
+  survives client navigation in zustand.
 
 ---
 
@@ -125,6 +145,13 @@ Rules:
   `gsap.ticker.lagSmoothing(0)`, plus `ScrollTrigger.refresh()` after `document.fonts.ready`.
 - Never call `window.scrollTo` for a smooth animation while Lenis is running — use the
   `scrollTo` from `useSmoothScroll()` so anchors land below the floating nav bar.
+- Every link and CTA travels through `useNavigate()` (`src/lib/useNavigate.ts`) or
+  `<NavLink>` (`chrome/NavLink.tsx`): same-page anchors scroll with Lenis, other pages
+  `router.push(href, { scroll: false })`. `SmoothScroll` owns the reset on route change
+  (top, or the URL's `#hash`) and re-runs `ScrollTrigger.refresh()`.
+- The preloader is server-rendered and hidden before first paint by `PRELOADER_SCRIPT`
+  (`html[data-preloaded]`) on repeat visits and under reduced motion. The session flag
+  is written when the curtain finishes — never on start, or StrictMode skips it.
 - Scroll locking is `stop()` / `start()` from `useSmoothScroll()` (Lenis + a
   `data-scroll-locked` fallback for reduced motion). Never `overflow: hidden` by hand.
 

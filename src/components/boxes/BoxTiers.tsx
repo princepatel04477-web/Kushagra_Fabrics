@@ -2,32 +2,38 @@
 
 /**
  * The box tiers: three TiltedCards in an asymmetric row — the middle card
- * taller and raised. Choosing a box stores it and travels to the builder.
+ * taller and raised. Choosing a box stores it and opens /build.
  */
 
 import { GiftBox } from "@/components/boxes/GiftBox";
 import { SectionShell } from "@/components/sections/SectionShell";
-import { useSmoothScroll } from "@/components/providers/SmoothScroll";
 import { TiltedCard } from "@/components/reactbits/TiltedCard";
 import { boxes } from "@/lib/data";
 import { formatINR } from "@/lib/format";
+import { useNavigate } from "@/lib/useNavigate";
 import { useGiftStore } from "@/store/gift";
 import { cn } from "@/lib/cn";
 
-export function BoxTiers() {
+interface SectionProps {
+  /** 1 on its own route, 2 when it sits inside another page. */
+  readonly headingLevel?: 1 | 2;
+}
+
+export function BoxTiers({ headingLevel }: SectionProps) {
   const selectedBox = useGiftStore((state) => state.selectedBox);
   const setBox = useGiftStore((state) => state.setBox);
-  const { scrollTo } = useSmoothScroll();
+  const navigate = useNavigate();
 
   const handleChoose = (id: string) => {
     setBox(id);
-    scrollTo("#builder");
+    navigate("/build");
   };
 
   return (
     <SectionShell
       id="boxes"
       heading="Choose his box"
+      headingLevel={headingLevel}
       intro="Every box arrives wrapped, ribboned and ready to hand over."
     >
       <div className="grid items-start gap-6 md:grid-cols-3">

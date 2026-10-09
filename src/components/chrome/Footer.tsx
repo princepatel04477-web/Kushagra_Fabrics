@@ -18,7 +18,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "motion/react";
 
-import { ScrollLink } from "@/components/chrome/ScrollLink";
+import { NavLink } from "@/components/chrome/NavLink";
 import { CircularText } from "@/components/reactbits/CircularText";
 import { TextPressure } from "@/components/reactbits/TextPressure";
 import { color, gsapEaseName } from "@/lib/tokens";
@@ -33,8 +33,6 @@ if (typeof window !== "undefined") {
 interface FooterLink {
   readonly label: string;
   readonly href: string;
-  /** Anchor links travel through Lenis so they land under the floating nav. */
-  readonly smooth?: boolean;
 }
 
 const LINK_COLUMNS: readonly {
@@ -44,27 +42,27 @@ const LINK_COLUMNS: readonly {
   {
     title: "Shop",
     links: [
-      { label: "Occasions", href: "#occasions", smooth: true },
-      { label: "Fabrics", href: "#fabrics", smooth: true },
-      { label: "Boxes", href: "#boxes", smooth: true },
-      { label: "Build a gift", href: "#builder", smooth: true },
+      { label: "Occasions", href: "/#occasions" },
+      { label: "Fabrics", href: "/fabrics" },
+      { label: "Boxes", href: "/boxes" },
+      { label: "Build a gift", href: "/build" },
     ],
   },
   {
     title: "Help",
     links: [
-      { label: "Delivery", href: "#delivery" },
-      { label: "Care guide", href: "#care-guide" },
-      { label: "Returns", href: "#returns" },
-      { label: "FAQ", href: "#faq" },
+      { label: "Delivery", href: "/delivery" },
+      { label: "Care guide", href: "/care" },
+      { label: "Returns", href: "/returns" },
+      { label: "FAQ", href: "/faq" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About", href: "#about" },
-      { label: "Corporate gifting", href: "#corporate", smooth: true },
-      { label: "Contact", href: "#contact" },
+      { label: "About", href: "/about" },
+      { label: "Corporate gifting", href: "/corporate" },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ];
@@ -181,7 +179,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="bg-shirting text-suiting">
+    <footer className="bg-shirting text-suiting">
       <FooterStitch />
 
       <div className="grid-shell pt-16 lg:pt-20">
@@ -211,21 +209,12 @@ export function Footer() {
                 <ul className="flex flex-col text-[0.9375rem] text-chalk">
                   {column.links.map((link) => (
                     <li key={link.label}>
-                      {link.smooth === true ? (
-                        <ScrollLink
-                          href={link.href}
-                          className="inline-flex min-h-[44px] items-center transition-colors duration-300 hover:text-suiting"
-                        >
-                          {link.label}
-                        </ScrollLink>
-                      ) : (
-                        <a
-                          href={link.href}
-                          className="inline-flex min-h-[44px] items-center transition-colors duration-300 hover:text-suiting"
-                        >
-                          {link.label}
-                        </a>
-                      )}
+                      <NavLink
+                        href={link.href}
+                        className="inline-flex min-h-[44px] items-center transition-colors duration-300 hover:text-suiting"
+                      >
+                        {link.label}
+                      </NavLink>
                     </li>
                   ))}
                 </ul>
@@ -263,20 +252,20 @@ export function Footer() {
           <nav aria-label="Legal">
             <ul className="flex gap-x-4">
               <li>
-                <a
-                  href="#privacy"
+                <NavLink
+                  href="/privacy"
                   className="inline-flex min-h-[44px] items-center px-2 transition-colors duration-300 hover:text-suiting"
                 >
                   Privacy
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#terms"
+                <NavLink
+                  href="/terms"
                   className="inline-flex min-h-[44px] items-center px-2 transition-colors duration-300 hover:text-suiting"
                 >
                   Terms
-                </a>
+                </NavLink>
               </li>
             </ul>
           </nav>

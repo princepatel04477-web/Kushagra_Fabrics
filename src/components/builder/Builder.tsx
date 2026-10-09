@@ -26,7 +26,12 @@ import { StepBox } from "./StepBox";
 import { StepFabrics } from "./StepFabrics";
 import { StepNote } from "./StepNote";
 
-export function Builder() {
+interface SectionProps {
+  /** 1 on its own route, 2 when it sits inside another page. */
+  readonly headingLevel?: 1 | 2;
+}
+
+export function Builder({ headingLevel }: SectionProps) {
   const selectedBox = useGiftStore((state) => state.selectedBox);
   const selectedFabrics = useGiftStore((state) => state.selectedFabrics);
   const addToBag = useGiftStore((state) => state.addToBag);
@@ -57,6 +62,7 @@ export function Builder() {
     <SectionShell
       id="builder"
       heading="Build the gift"
+      headingLevel={headingLevel}
       intro="Pick an occasion, a box and the cloth. We tie the ribbon and write the note card in your words."
     >
       <LayoutGroup>

@@ -46,6 +46,8 @@ export interface StaggeredMenuProps {
   readonly onOpenChange: (open: boolean) => void;
   readonly items: readonly StaggeredMenuItem[];
   readonly onNavigate?: (href: string) => void;
+  /** Current page, marked aria-current. */
+  readonly activeHref?: string;
   /** Rendered under the links — used for the bag and the primary action. */
   readonly footer?: ReactNode;
   readonly className?: string;
@@ -56,6 +58,7 @@ export function StaggeredMenu({
   onOpenChange,
   items,
   onNavigate,
+  activeHref,
   footer,
   className,
 }: StaggeredMenuProps) {
@@ -205,7 +208,7 @@ export function StaggeredMenu({
           ))}
 
           <div className="relative z-10 flex h-full flex-col justify-between px-[clamp(20px,5vw,64px)] pb-10 pt-[104px]">
-            <nav aria-label="Sections">
+            <nav aria-label="Pages">
               <ul className="flex flex-col gap-2">
                 {items.map((item, index) => (
                   <motion.li
@@ -230,6 +233,9 @@ export function StaggeredMenu({
                     <a
                       href={item.href}
                       aria-label={item.ariaLabel}
+                      aria-current={
+                        activeHref === item.href ? "page" : undefined
+                      }
                       onClick={(event) => {
                         if (
                           event.metaKey ||

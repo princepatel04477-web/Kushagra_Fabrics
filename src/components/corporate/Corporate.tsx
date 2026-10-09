@@ -221,11 +221,17 @@ const inputClass = (hasError: boolean) =>
     hasError ? "border-red" : "border-shirting/25",
   );
 
-export function Corporate() {
+interface SectionProps {
+  /** 1 on its own route, 2 when it sits inside another page. */
+  readonly headingLevel?: 1 | 2;
+}
+
+export function Corporate({ headingLevel = 2 }: SectionProps) {
   const [values, setValues] = useState<FormValues>(EMPTY_VALUES);
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [submitted, setSubmitted] = useState<FormValues | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
+  const Heading = headingLevel === 1 ? "h1" : "h2";
 
   const boxOptions = useMemo(
     () => [...boxes.map((box) => box.name), "Mixed"],
@@ -266,11 +272,14 @@ export function Corporate() {
     <section
       id="corporate"
       aria-labelledby="corporate-heading"
-      className="section-pad bg-suiting text-shirting"
+      className={cn(
+        "bg-suiting text-shirting",
+        headingLevel === 1 ? "page-top" : "section-pad",
+      )}
     >
       <div className="grid-shell">
         <div className="col-span-12 flex flex-col gap-6 lg:col-span-7">
-          <h2 id="corporate-heading">Gifting for teams</h2>
+          <Heading id="corporate-heading">Gifting for teams</Heading>
           <p className="text-[1.0625rem] text-shirting/70">
             Diwali boxes for 50 people or wedding favours for 500. We handle
             the fabric, the packing and your note in every box.

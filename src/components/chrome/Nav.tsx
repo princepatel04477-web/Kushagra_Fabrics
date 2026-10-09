@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
@@ -10,9 +11,9 @@ import {
   useScroll,
 } from "motion/react";
 
-import { useSmoothScroll } from "@/components/providers/SmoothScroll";
 import { PillNav, type PillNavItem } from "@/components/reactbits/PillNav";
 import { useGiftStore, useBagCount } from "@/store/gift";
+import { useNavigate } from "@/lib/useNavigate";
 import { cn } from "@/lib/cn";
 import { duration as tokenDuration, easeTailorBezier, layout } from "@/lib/tokens";
 
@@ -20,11 +21,13 @@ import { BagDrawer } from "../bag/BagDrawer";
 import { MobileMenu } from "./MobileMenu";
 
 const NAV_ITEMS: readonly PillNavItem[] = [
-  { label: "Occasions", href: "#occasions" },
-  { label: "Fabrics", href: "#fabrics" },
-  { label: "Boxes", href: "#boxes" },
-  { label: "Corporate", href: "#corporate" },
+  { label: "Fabrics", href: "/fabrics" },
+  { label: "Boxes", href: "/boxes" },
+  { label: "Corporate", href: "/corporate" },
+  { label: "About", href: "/about" },
 ];
+
+const BUILD_HREF = "/build";
 
 /** px of downward scroll per frame that counts as "fast". */
 const HIDE_SPEED = 8;
@@ -57,7 +60,12 @@ function BagIcon() {
 }
 
 export function Nav() {
-  const { scrollTo, scrollToTop, start } = useSmoothScroll();
+  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = usePathname();
+  const activeHref = NAV_ITEMS.find(
+    (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+  )?.href;
   const bagCount = useBagCount();
   const bagOpen = useGiftStore((state) => state.bagOpen);
   const openBag = useGiftStore((state) => state.openBag);
@@ -108,22 +116,26 @@ export function Nav() {
     previousCount.current = bagCount;
   }, [bagCount, animateBadge, badgeScope]);
 
-  // Every action from the bar: close any open menu, release the scroll lock,
-  // then travel. Safe on desktop too, where the menu is never open.
+  // Warm every page the bar links to; the links are plain anchors, so Next
+  // would not prefetch them on its own.
+  useEffect(() => {
+    for (const item of NAV_ITEMS) router.prefetch(item.href);
+    router.prefetch(BUILD_HREF);
+  }, [router]);
+
+  // Every action from the bar: close any open menu, then travel (useNavigate
+  // releases the scroll lock first). Safe on desktop, where the menu never opens.
   const handleBarAction = useCallback(
     (href: string) => {
       setMenuOpen(false);
-      start();
-      scrollTo(href);
+      navigate(href);
     },
-    [scrollTo, start],
+    [navigate],
   );
 
   const handleBarHome = useCallback(() => {
-    setMenuOpen(false);
-    start();
-    scrollToTop();
-  }, [scrollToTop, start]);
+    handleBarAction("/");
+  }, [handleBarAction]);
 
   const bagLabel =
     bagCount === 1 ? "Bag, 1 box" : `Bag, ${bagCount} boxes`;
@@ -148,7 +160,7 @@ export function Nav() {
         <button
           type="button"
           onClick={handleBarHome}
-          aria-label="Kushagra — back to top"
+          aria-label="Kushagra — home"
           className="flex shrink-0 items-center gap-2 rounded-pill pl-1 pr-1"
         >
           <span className="relative block h-9 w-[30px]">
@@ -167,7 +179,11 @@ export function Nav() {
         </button>
 
         <div className="hidden flex-1 justify-center min-[900px]:flex">
-          <PillNav items={NAV_ITEMS} onNavigate={handleBarAction} />
+          <PillNav
+            items={NAV_ITEMS}
+            activeHref={activeHref}
+            onNavigate={handleBarAction}
+          />
         </div>
 
         <div className="ml-auto flex items-center gap-2">
@@ -206,7 +222,7 @@ export function Nav() {
           <button
             type="button"
             onClick={() => {
-              handleBarAction("#builder");
+              handleBarAction(BUILD_HREF);
             }}
             className="hidden h-10 shrink-0 items-center rounded-pill bg-red-deep px-5 text-[0.9375rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90 min-[900px]:inline-flex"
           >
@@ -218,11 +234,13 @@ export function Nav() {
               open={menuOpen}
               onOpenChange={setMenuOpen}
               items={NAV_ITEMS}
+              activeHref={activeHref}
+              onNavigate={handleBarAction}
               footer={
                 <button
                   type="button"
                   onClick={() => {
-                    handleBarAction("#builder");
+                    handleBarAction(BUILD_HREF);
                   }}
                   className="inline-flex h-12 w-full items-center justify-center rounded-pill bg-red-deep px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
                 >

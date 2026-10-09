@@ -26,7 +26,7 @@ export interface PillNavItem {
 
 export interface PillNavProps {
   readonly items: readonly PillNavItem[];
-  /** Currently active section, used when nothing is hovered. */
+  /** Current page, filled when nothing is hovered. */
   readonly activeHref?: string;
   readonly onNavigate?: (href: string) => void;
   readonly className?: string;
@@ -42,7 +42,7 @@ export function PillNav({
   const filled = hovered ?? activeHref ?? null;
 
   return (
-    <nav aria-label="Sections" className={cn("flex items-center", className)}>
+    <nav aria-label="Pages" className={cn("flex items-center", className)}>
       <ul className="flex items-center gap-1">
         {items.map((item) => {
           const isFilled = filled === item.href;
@@ -52,7 +52,7 @@ export function PillNav({
               <a
                 href={item.href}
                 aria-label={item.ariaLabel}
-                aria-current={activeHref === item.href ? "true" : undefined}
+                aria-current={activeHref === item.href ? "page" : undefined}
                 onMouseEnter={() => setHovered(item.href)}
                 onMouseLeave={() =>
                   setHovered((current) =>

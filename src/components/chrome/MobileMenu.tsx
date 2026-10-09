@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import { useSmoothScroll } from "@/components/providers/SmoothScroll";
 import {
@@ -13,6 +13,9 @@ interface MobileMenuProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
   readonly items: readonly StaggeredMenuItem[];
+  readonly activeHref?: string;
+  /** Travels to a page. Must release the scroll lock (useNavigate does). */
+  readonly onNavigate: (href: string) => void;
   /** Rendered under the links — the primary action lives here below 900px. */
   readonly footer?: ReactNode;
 }
@@ -21,16 +24,18 @@ interface MobileMenuProps {
  * Mobile shell for the nav, under 900px. The trigger and the panels live in
  * React Bits' StaggeredMenu; this component owns everything around it: the
  * scroll freeze (through Lenis, never a second scroll source), closing when the
- * viewport grows past the breakpoint, and handing navigation to the provider so
- * anchors land under the floating bar.
+ * viewport grows past the breakpoint. Navigation is handed in by the nav
+ * (useNavigate), which releases the lock before travelling.
  */
 export function MobileMenu({
   open,
   onOpenChange,
   items,
+  activeHref,
+  onNavigate,
   footer,
 }: MobileMenuProps) {
-  const { scrollTo, start, stop } = useSmoothScroll();
+  const { start, stop } = useSmoothScroll();
 
   useEffect(() => {
     if (open) {
@@ -56,22 +61,13 @@ export function MobileMenu({
     };
   }, [onOpenChange]);
 
-  // Runs while the panels are still animating out. The lock has to be released
-  // first or Lenis would swallow the scroll.
-  const handleNavigate = useCallback(
-    (href: string) => {
-      start();
-      scrollTo(href);
-    },
-    [scrollTo, start],
-  );
-
   return (
     <StaggeredMenu
       open={open}
       onOpenChange={onOpenChange}
       items={items}
-      onNavigate={handleNavigate}
+      activeHref={activeHref}
+      onNavigate={onNavigate}
       footer={footer}
     />
   );

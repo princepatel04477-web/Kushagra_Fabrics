@@ -169,6 +169,13 @@
   padding-block: clamp(96px, 14vw, 180px);
 }
 
+/* section-pad for the first section of a route: the top clears the floating
+   nav (20px + 72px) with the same air the home hero gets. */
+@utility page-top {
+  padding-top: clamp(150px, 16vw, 220px);
+  padding-bottom: clamp(96px, 14vw, 180px);
+}
+
 @utility stack-s {
   display: flex;
   flex-direction: column;
@@ -292,6 +299,11 @@ html.lenis body {
   transition-property: overflow;
   transition-duration: 1ms;
   transition-behavior: allow-discrete;
+}
+
+/* Preloader already played this session, or reduced motion: never paint it. */
+html[data-preloaded="1"] .preloader {
+  display: none;
 }
 
 /* Fallback scroll lock for reduced-motion users, where Lenis never runs. */

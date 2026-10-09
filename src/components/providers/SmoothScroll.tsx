@@ -9,6 +9,7 @@ import {
   useRef,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -27,6 +28,10 @@ import { easeTailorPath, gsapEaseName, layout } from "@/lib/tokens";
  *
  * Under prefers-reduced-motion Lenis is never created and native scrolling is
  * used instead, including for anchor navigation.
+ *
+ * Route changes are handled here too: useNavigate() pushes with Next's scroll
+ * reset off, and this provider jumps to the top (or to the URL's #hash) once
+ * the new page has committed, then re-measures every ScrollTrigger.
  */
 
 if (typeof window !== "undefined") {
@@ -159,6 +164,28 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       behavior: reducedRef.current ? "auto" : "smooth",
     });
   }, []);
+
+  // A new page: start at its top (or its #hash) and re-measure. The footer
+  // and nav persist across routes, so their triggers need the new height.
+  const pathname = usePathname();
+  const lastPathRef = useRef(pathname);
+  useEffect(() => {
+    if (lastPathRef.current === pathname) return;
+    lastPathRef.current = pathname;
+    const lenis = lenisRef.current;
+    const { hash } = window.location;
+    if (lenis !== null) {
+      lenis.scrollTo(0, { immediate: true, force: true });
+    } else {
+      window.scrollTo(0, 0);
+    }
+    const frame = requestAnimationFrame(() => {
+      lenis?.resize();
+      ScrollTrigger.refresh();
+      if (hash !== "") scrollTo(hash);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pathname, scrollTo]);
 
   const stop = useCallback(() => {
     lenisRef.current?.stop();

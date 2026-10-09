@@ -11,57 +11,86 @@
  *    unmounts through AnimatePresence (2.25s in total).
  *
  * It plays once per session and never under prefers-reduced-motion.
+ *
+ * No flash: the shirting layer is part of the server HTML, so the page never
+ * shows for a frame before the loader covers it. PRELOADER_SCRIPT runs before
+ * first paint and hides the layer (html[data-preloaded]) when it should not
+ * play. The session flag is written when the curtain finishes, not when it
+ * starts, so StrictMode's double effect cannot skip the animation.
  */
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
+import { useSmoothScroll } from "@/components/providers/SmoothScroll";
 import { color, duration as tokenDuration, easeTailorBezier } from "@/lib/tokens";
 
 const PRELOADER_FLAG = "kushagra-preloaded";
+
+/** Inline, render-blocking: decides before paint whether the layer shows. */
+export const PRELOADER_SCRIPT = `try{if(sessionStorage.getItem("${PRELOADER_FLAG}")==="1"||matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.dataset.preloaded="1"}}catch(e){document.documentElement.dataset.preloaded="1"}`;
 
 const STITCH_LENGTH = 120;
 
 const LOGO_DELAY = tokenDuration.stitch - 0.25;
 const CURTAIN_DELAY = LOGO_DELAY + tokenDuration.logo + 0.1;
 
+type Phase = "pending" | "playing" | "done";
+
+function shouldSkip(): boolean {
+  if (document.documentElement.dataset.preloaded === "1") return true;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return true;
+  }
+  try {
+    return globalThis.sessionStorage?.getItem(PRELOADER_FLAG) === "1";
+  } catch {
+    return true;
+  }
+}
+
+function markPlayed() {
+  document.documentElement.dataset.preloaded = "1";
+  try {
+    globalThis.sessionStorage?.setItem(PRELOADER_FLAG, "1");
+  } catch {
+    /* private mode — the animation simply replays on reload */
+  }
+}
+
 export function Preloader() {
-  const prefersReducedMotion = useReducedMotion();
-  const [playing, setPlaying] = useState(false);
+  const [phase, setPhase] = useState<Phase>("pending");
+  const { stop, start } = useSmoothScroll();
 
   useEffect(() => {
-    if (prefersReducedMotion === true) return;
+    setPhase(shouldSkip() ? "done" : "playing");
+  }, []);
 
-    let alreadyPlayed = false;
-    try {
-      alreadyPlayed =
-        globalThis.sessionStorage?.getItem(PRELOADER_FLAG) === "1";
-    } catch {
-      alreadyPlayed = false;
-    }
-    if (alreadyPlayed) return;
-
-    try {
-      globalThis.sessionStorage?.setItem(PRELOADER_FLAG, "1");
-    } catch {
-      /* private mode — the animation simply replays on reload */
-    }
-
-    const rafId = requestAnimationFrame(() => {
-      setPlaying(true);
-    });
-    return () => cancelAnimationFrame(rafId);
-  }, [prefersReducedMotion]);
+  // Hold the page still under the curtain. This runs on the commit after
+  // mount, by which time SmoothScroll has constructed Lenis.
+  useEffect(() => {
+    if (phase !== "playing") return;
+    stop();
+    return () => start();
+  }, [phase, stop, start]);
 
   return (
     <AnimatePresence>
-      {playing ? (
+      {phase === "pending" ? (
+        <div
+          key="preloader-static"
+          aria-hidden="true"
+          className="preloader fixed inset-0 z-[200] bg-shirting"
+        />
+      ) : null}
+
+      {phase === "playing" ? (
         <motion.div
           key="preloader"
           role="status"
           aria-live="polite"
-          className="fixed inset-0 z-[200] grid place-items-center bg-shirting"
+          className="preloader fixed inset-0 z-[200] grid place-items-center bg-shirting"
           initial={{ y: 0 }}
           animate={{ y: "-100%" }}
           transition={{
@@ -70,7 +99,8 @@ export function Preloader() {
             delay: CURTAIN_DELAY,
           }}
           onAnimationComplete={() => {
-            setPlaying(false);
+            markPlayed();
+            setPhase("done");
           }}
         >
           <span className="sr-only">Loading Kushagra</span>

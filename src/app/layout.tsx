@@ -3,8 +3,8 @@ import { Bodoni_Moda, Cabin } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { Nav } from "@/components/chrome/Nav";
-import { Preloader } from "@/components/chrome/Preloader";
-import { InfoModal } from "@/components/chrome/InfoModal";
+import { PRELOADER_SCRIPT, Preloader } from "@/components/chrome/Preloader";
+import { Footer } from "@/components/chrome/Footer";
 import { Providers } from "@/components/providers/Providers";
 
 import "./globals.css";
@@ -30,7 +30,10 @@ const siteUrl = "https://kushagrafabrics.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Kushagra — Premium fabric gift boxes for men",
+  title: {
+    default: "Kushagra — Premium fabric gift boxes for men",
+    template: "%s — Kushagra",
+  },
   description:
     "Kushagra sends premium unstitched shirting and suiting as a gift box. You pick the cloth, he gets it stitched by his own tailor, and he stands out. Select, stitch, stand out.",
   applicationName: "Kushagra",
@@ -76,7 +79,18 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en-IN" className={`${display.variable} ${body.variable}`}>
+    <html
+      lang="en-IN"
+      className={`${display.variable} ${body.variable}`}
+      // PRELOADER_SCRIPT sets data-preloaded before hydration.
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: PRELOADER_SCRIPT }} />
+        <noscript>
+          <style>{".preloader{display:none}"}</style>
+        </noscript>
+      </head>
       <body>
         {/* React hoists these into <head>. Fonts load through next/font with
             font-display: swap; the hints warm the connection up front. */}
@@ -92,8 +106,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Providers>
           <Preloader />
           <Nav />
-          <InfoModal />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>

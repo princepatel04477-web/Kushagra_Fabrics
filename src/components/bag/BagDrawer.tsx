@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { useMounted } from "@/lib/useMounted";
 import { useSmoothScroll } from "@/components/providers/SmoothScroll";
+import { useNavigate } from "@/lib/useNavigate";
 import { useGiftStore, useBagTotal } from "@/store/gift";
 import { formatINR } from "@/lib/format";
 import { easeTailorBezier } from "@/lib/tokens";
@@ -50,7 +51,8 @@ export function BagDrawer() {
   const closeBag = useGiftStore((state) => state.closeBag);
   const lines = useGiftStore((state) => state.lines);
   const total = useBagTotal();
-  const { stop, start, scrollTo } = useSmoothScroll();
+  const { stop, start } = useSmoothScroll();
+  const navigate = useNavigate();
 
   const mounted = useMounted();
   const [checkout, setCheckout] = useState(false);
@@ -190,7 +192,7 @@ export function BagDrawer() {
                       type="button"
                       onClick={() => {
                         closeBag();
-                        scrollTo("#builder");
+                        navigate("/build");
                       }}
                       className="inline-flex h-12 items-center rounded-pill bg-red-deep px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
                     >

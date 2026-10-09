@@ -3,26 +3,31 @@
 /**
  * The swatch book section: a draggable pile of the eight cloths on the left
  * (six columns), the details panel for the top swatch on the right (five
- * columns, offset by one). On hover-capable devices the top swatch carries a
+ * columns, offset by one). "Use in my box" adds the cloth and opens /build. On hover-capable devices the top swatch carries a
  * light sheen (GlareHover) and a magnifying weave lens follows the cursor.
  */
 
 import { useRef, useState } from "react";
 
 import { SectionShell } from "@/components/sections/SectionShell";
-import { useSmoothScroll } from "@/components/providers/SmoothScroll";
 import { GlareHover } from "@/components/reactbits/GlareHover";
 import { Stack, type StackItem } from "@/components/reactbits/Stack";
 import { fabrics } from "@/lib/data";
+import { useNavigate } from "@/lib/useNavigate";
 import { useGiftStore } from "@/store/gift";
 
 import { FabricTexture } from "./FabricTexture";
 import { SwatchDetails } from "./SwatchDetails";
 import { WeaveLens } from "./WeaveLens";
 
-export function SwatchBook() {
+interface SectionProps {
+  /** 1 on its own route, 2 when it sits inside another page. */
+  readonly headingLevel?: 1 | 2;
+}
+
+export function SwatchBook({ headingLevel }: SectionProps) {
   const addFabric = useGiftStore((state) => state.addFabric);
-  const { scrollTo } = useSmoothScroll();
+  const navigate = useNavigate();
   const [topIndex, setTopIndex] = useState(0);
   const pileRef = useRef<HTMLDivElement | null>(null);
 
@@ -40,13 +45,14 @@ export function SwatchBook() {
 
   const handleUse = (id: string) => {
     addFabric(id);
-    scrollTo("#builder");
+    navigate("/build");
   };
 
   return (
     <SectionShell
       id="fabrics"
       heading="Feel the fabric"
+      headingLevel={headingLevel}
       intro="Eight cloths we'd wear ourselves. Drag through them like a tailor's swatch book."
     >
       <div className="grid grid-cols-12 items-start gap-y-12">

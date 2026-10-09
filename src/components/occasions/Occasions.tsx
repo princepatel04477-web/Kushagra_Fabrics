@@ -2,16 +2,16 @@
 
 /**
  * The occasions section: one FlowingMenu row per occasion. Choosing one
- * stores it on the draft gift and travels to the builder.
+ * stores it on the draft gift and opens /build.
  */
 
 import { SectionShell } from "@/components/sections/SectionShell";
-import { useSmoothScroll } from "@/components/providers/SmoothScroll";
 import {
   FlowingMenu,
   type FlowingMenuItem,
 } from "@/components/reactbits/FlowingMenu";
 import { occasions } from "@/lib/data";
+import { useNavigate } from "@/lib/useNavigate";
 import { useGiftStore } from "@/store/gift";
 
 /**
@@ -54,7 +54,7 @@ const OCCASION_IMAGES: Readonly<Record<string, readonly string[]>> = {
 export function Occasions() {
   const setOccasion = useGiftStore((state) => state.setOccasion);
   const selectedOccasion = useGiftStore((state) => state.selectedOccasion);
-  const { scrollTo } = useSmoothScroll();
+  const navigate = useNavigate();
 
   const items: readonly FlowingMenuItem[] = occasions.map((occasion) => ({
     id: occasion.id,
@@ -65,7 +65,7 @@ export function Occasions() {
 
   const handleSelect = (id: string) => {
     setOccasion(id);
-    scrollTo("#builder");
+    navigate("/build");
   };
 
   return (
