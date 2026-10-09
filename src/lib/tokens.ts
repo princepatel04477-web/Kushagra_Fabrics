@@ -13,6 +13,8 @@ export const color = {
   paper: "#f7f8fa",
   suiting: "#1b2433",
   red: "#e63339",
+  redDeep: "#c92b31",
+  redSoft: "#ffa0a3",
   thread: "#f28c3c",
   chalk: "#5e6773",
   line: "rgb(27 36 51 / 0.14)",

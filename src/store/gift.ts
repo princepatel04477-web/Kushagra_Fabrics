@@ -29,7 +29,8 @@ const STORAGE_VERSION = 1;
 /** How many lengths may be picked before a box has been chosen. */
 const MAX_FABRICS_BEFORE_BOX = 3;
 
-const MAX_LINE_QTY = 20;
+/** Highest quantity a single bag line may reach (stepper range 1–50). */
+export const MAX_LINE_QTY = 50;
 
 /* ------------------------------------------------------------------ types -- */
 
@@ -58,10 +59,14 @@ export interface GiftState {
   note: GiftNote;
   lines: BagLine[];
   hydrated: boolean;
+  /** Bag drawer visibility — UI state, never persisted. */
+  bagOpen: boolean;
 
   setOccasion: (id: string | null) => void;
   setBox: (id: string | null) => void;
   toggleFabric: (id: string) => void;
+  /** Adds a fabric if it is not already chosen — never removes. */
+  addFabric: (id: string) => void;
   clearFabrics: () => void;
   setNote: (patch: Partial<GiftNote>) => void;
   resetGift: () => void;
@@ -70,6 +75,9 @@ export interface GiftState {
   removeLine: (id: string) => void;
   setLineQty: (id: string, qty: number) => void;
   clearBag: () => void;
+
+  openBag: () => void;
+  closeBag: () => void;
 
   markHydrated: () => void;
 }
@@ -128,6 +136,41 @@ const safeStorage: StateStorage = {
   },
 };
 
+/**
+ * Adds a fabric to a selection, respecting the box's slot rules when a box
+ * has been chosen. With no box chosen yet the pick is simply remembered,
+ * keeping the most recent three.
+ */
+function addFabricToSelection(
+  selectedFabrics: readonly string[],
+  boxId: string | null,
+  id: string,
+): string[] {
+  const withNew = [...selectedFabrics, id];
+  const box = getBox(boxId);
+
+  if (box === undefined) {
+    return withNew.slice(-MAX_FABRICS_BEFORE_BOX);
+  }
+
+  const fitted = fitSelection(box, withNew);
+  if (fitted.includes(id)) {
+    return fitted;
+  }
+
+  // No room, or the wrong kind: drop the earliest pick until it fits.
+  let attempt = withNew.slice();
+  while (attempt.length > 0) {
+    attempt = attempt.slice(1);
+    const retry = fitSelection(box, attempt);
+    if (retry.includes(id)) {
+      return retry;
+    }
+  }
+
+  return [];
+}
+
 /* ------------------------------------------------------------------ store -- */
 
 type PersistedGift = Pick<GiftState, "lines">;
@@ -141,6 +184,7 @@ export const useGiftStore = create<GiftState>()(
       note: emptyNote,
       lines: [],
       hydrated: false,
+      bagOpen: false,
 
       setOccasion: (id) => set({ selectedOccasion: id }),
 
@@ -158,37 +202,34 @@ export const useGiftStore = create<GiftState>()(
 
       toggleFabric: (id) =>
         set((state) => {
-          const current = state.selectedFabrics;
-
-          if (current.includes(id)) {
-            return { selectedFabrics: current.filter((fabricId) => fabricId !== id) };
-          }
-
-          const withNew = [...current, id];
-          const box = getBox(state.selectedBox);
-
-          if (box === undefined) {
+          if (state.selectedFabrics.includes(id)) {
             return {
-              selectedFabrics: withNew.slice(-MAX_FABRICS_BEFORE_BOX),
+              selectedFabrics: state.selectedFabrics.filter(
+                (fabricId) => fabricId !== id,
+              ),
             };
           }
+          return {
+            selectedFabrics: addFabricToSelection(
+              state.selectedFabrics,
+              state.selectedBox,
+              id,
+            ),
+          };
+        }),
 
-          const fitted = fitSelection(box, withNew);
-          if (fitted.includes(id)) {
-            return { selectedFabrics: fitted };
+      addFabric: (id) =>
+        set((state) => {
+          if (state.selectedFabrics.includes(id)) {
+            return {};
           }
-
-          // No room, or the wrong kind: drop the earliest pick until it fits.
-          let attempt = withNew.slice();
-          while (attempt.length > 0) {
-            attempt = attempt.slice(1);
-            const retry = fitSelection(box, attempt);
-            if (retry.includes(id)) {
-              return { selectedFabrics: retry };
-            }
-          }
-
-          return { selectedFabrics: [] };
+          return {
+            selectedFabrics: addFabricToSelection(
+              state.selectedFabrics,
+              state.selectedBox,
+              id,
+            ),
+          };
         }),
 
       clearFabrics: () => set({ selectedFabrics: [] }),
@@ -264,6 +305,9 @@ export const useGiftStore = create<GiftState>()(
         }),
 
       clearBag: () => set({ lines: [] }),
+
+      openBag: () => set({ bagOpen: true }),
+      closeBag: () => set({ bagOpen: false }),
 
       markHydrated: () => set({ hydrated: true }),
     }),

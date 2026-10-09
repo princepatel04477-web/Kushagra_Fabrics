@@ -46,7 +46,9 @@ Defined once in `src/app/globals.css` under `@theme`, and mirrored as a typed co
 | `--color-shirting` | `#EEF1F4`                | page background                                        |
 | `--color-paper`    | `#F7F8FA`                | raised surfaces (nav bar, cards)                       |
 | `--color-suiting`  | `#1B2433`                | main text, dark sections, nav pill fill                |
-| `--color-red`      | `#E63339`                | **only**: logo, ribbon, the one primary button, errors |
+| `--color-red`      | `#E63339`                | **only**: logo and ribbons (non-text red)              |
+| `--color-red-deep` | `#C92B31`                | button fills and error text on light surfaces — AA with white and shirting |
+| `--color-red-soft` | `#FFA0A3`                | error text on dark (`--color-suiting`) surfaces — AA with suiting |
 | `--color-thread`   | `#F28C3C`                | **only**: dashed stitch lines and sparks. Never text   |
 | `--color-chalk`    | `#5E6773`                | secondary text (AA on shirting at 17px)                |
 | `--color-line`     | `rgb(27 36 51 / 0.14)`   | 1px borders and rules                                  |
@@ -105,9 +107,15 @@ component is in the wrong place.
 
 Rules:
 
-- Animate **transform and opacity only**.
-  One documented exception: the nav bar's compact state is a CSS `transition` on
-  `height`/`padding` — a single fixed element, on a threshold cross, never per frame.
+- Animate **transform and opacity only**. Documented exceptions:
+  - The nav bar's compact state is a CSS `transition` on `height`/`padding` —
+    a single fixed element, on a threshold cross, never per frame.
+  - The stitch lines (how-it-works, footer) reveal via `stroke-dashoffset`
+    inside an SVG mask, and the needle rides the path through SVG geometry —
+    drawing primitives, not layout.
+  - The footer wordmark animates the variable font's weight axis alongside
+    `scaleY` — it needs a variable `wght` axis, so Bodoni Moda loads without
+    a static weight list.
 - `prefers-reduced-motion`: **every** effect has a static end state.
   `<MotionConfig reducedMotion="user">` covers motion; GSAP and Lenis are guarded
   explicitly with `useReducedMotion()` (in `SmoothScroll`, which never constructs Lenis
@@ -129,6 +137,17 @@ our tokens — React Bits' default colours must never survive contact with this 
 | ---------------- | ----------------------------------------------- | ----- | ------ |
 | `PillNav`        | `chrome/Nav.tsx` — floating bar, ≥ 900px        | 1     | ✅     |
 | `StaggeredMenu`  | `chrome/MobileMenu.tsx` — under 900px           | 1     | ✅     |
+| `FlowingMenu`    | `occasions/Occasions.tsx` — occasion rows, suiting marquee band | 3 | ✅ |
+| `Stack`          | `fabrics/SwatchBook.tsx` — draggable swatch pile | 3     | ✅     |
+| `GlareHover`     | `fabrics/SwatchBook.tsx` — sheen on the top swatch only | 3 | ✅ |
+| `TiltedCard`     | `boxes/BoxTiers.tsx` — box tier cards | 4     | ✅     |
+| `TextType`       | `builder/GiftCard.tsx` — the note card typing | 4     | ✅     |
+| `ClickSpark`     | `builder/Builder.tsx` — Add to bag sparks (thread colour) | 4 | ✅ |
+| `Magnet`         | `builder/Builder.tsx` — Add to bag magnetic pull                  | 4     | ✅     |
+| `CountUp`        | `corporate/Corporate.tsx` — corporate stats row                   | 6     | ✅     |
+| `LogoLoop`       | `corporate/Corporate.tsx` — client wordmark marquee               | 6     | ✅     |
+| `CircularText`   | `chrome/Footer.tsx` — rotating Select-Stitch-Stand-Out badge      | 6     | ✅     |
+| `TextPressure`   | `chrome/Footer.tsx` — giant KUSHAGRA wordmark (variable weight)   | 6     | ✅     |
 
 Install with
 `npx shadcn@latest add https://reactbits.dev/r/<Name>-TS-TW`
@@ -140,8 +159,12 @@ and restyle before committing.
 
 ## 6. Data and money
 
-- `src/lib/data.ts` types the catalogue: `Occasion`, `Fabric` (`kind: 'shirting' | 'suiting'`),
+- `src/lib/data.ts` types the catalogue: `Occasion`, `Fabric` (`kind: 'shirting' | 'suiting'`,
+  plus a `texture` key drawn in CSS by `fabrics/FabricTexture.tsx` and a one-line `wear` note),
   `BoxTier` with slot rules. Later phases add contents to boxes, not new shapes.
+- Slot logic for the builder is pure and unit-testable in `src/lib/slots.ts`
+  (`canAdd`, `remaining`, `ruleString`, `missingString`, `blockedReason`). The builder chips,
+  the "Add to bag" guard and the box-change trimming all read from there.
 - **Prices are integer rupees.** Never floats, never paise.
 - Format with `formatINR()` from `src/lib/format.ts`. Never concatenate a `₹` by hand.
 - `src/store/gift.ts` holds the draft gift (occasion, box, fabrics, note) and the bag.
@@ -161,7 +184,7 @@ and restyle before committing.
 - `useEffect` + `gsap.to` for something that is really a scroll trigger.
 - `motion` for scroll-linked animation; GSAP for mount/unmount.
 - Gradients, drop shadows, blur-on-text, glassmorphism beyond the nav's `backdrop-blur`.
-- Red on anything that is not the logo, a ribbon, the single primary button, or an error.
+- Red on anything that is not the logo, a ribbon, the single primary button (`red-deep`), or an error (`red-deep` on light, `red-soft` on dark).
 - `--color-thread` as a text colour.
 - All-caps eyebrows, italic words inside headings, arrows in button labels, emoji.
 - Centred symmetric section layouts.

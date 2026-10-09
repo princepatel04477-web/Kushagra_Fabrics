@@ -10,7 +10,9 @@ import "./globals.css";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  // No weight list: Bodoni Moda is a variable font (wght 400–900), and the
+  // footer wordmark animates the weight axis per letter. Static instances
+  // would snap between weights instead of moving smoothly.
   style: ["normal", "italic"],
   variable: "--font-bodoni-moda",
   display: "swap",
@@ -75,6 +77,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en-IN" className={`${display.variable} ${body.variable}`}>
       <body>
+        {/* React hoists these into <head>. Fonts load through next/font with
+            font-display: swap; the hints warm the connection up front. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <a className="skip-link" href="#main">
           Skip to content
         </a>
