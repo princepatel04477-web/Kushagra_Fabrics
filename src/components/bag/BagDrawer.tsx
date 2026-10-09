@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 
+import { useMounted } from "@/lib/useMounted";
 import { useSmoothScroll } from "@/components/providers/SmoothScroll";
 import { useGiftStore, useBagTotal } from "@/store/gift";
 import { formatINR } from "@/lib/format";
@@ -51,14 +52,11 @@ export function BagDrawer() {
   const total = useBagTotal();
   const { stop, start, scrollTo } = useSmoothScroll();
 
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [checkout, setCheckout] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const wasOpen = useRef(false);
-
-  // The portal target only exists on the client.
-  useEffect(() => setMounted(true), []);
 
   // Scroll lock while open — through Lenis, never overflow: hidden.
   useEffect(() => {

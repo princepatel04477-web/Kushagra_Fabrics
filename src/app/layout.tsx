@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { Nav } from "@/components/chrome/Nav";
 import { Preloader } from "@/components/chrome/Preloader";
+import { InfoModal } from "@/components/chrome/InfoModal";
 import { Providers } from "@/components/providers/Providers";
 
 import "./globals.css";
@@ -91,6 +92,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Providers>
           <Preloader />
           <Nav />
+          <InfoModal />
           {children}
         </Providers>
       </body>

@@ -50,6 +50,9 @@ export function ClickSpark({
   const clearTimer = useRef<number | null>(null);
 
   const handleClick = (event: MouseEvent<HTMLSpanElement>) => {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest("button:disabled, [aria-disabled='true']")) return;
+
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;

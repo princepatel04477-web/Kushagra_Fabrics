@@ -117,7 +117,11 @@ export function HowItWorks() {
   const stepRefs = useRef<(HTMLElement | null)[]>([]);
   const numberRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const reducedRef = useRef(reduced);
-  reducedRef.current = reduced;
+
+  useEffect(() => {
+    reducedRef.current = reduced;
+  }, [reduced]);
+
   const stitchTweenRef = useRef<gsap.core.Tween | null>(null);
 
   const build = useCallback(() => {

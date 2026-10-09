@@ -75,7 +75,9 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
   const reducedRef = useRef(false);
 
-  reducedRef.current = prefersReducedMotion === true;
+  useEffect(() => {
+    reducedRef.current = prefersReducedMotion === true;
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     if (prefersReducedMotion === true) return;

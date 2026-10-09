@@ -48,7 +48,10 @@ export function Preloader() {
       /* private mode — the animation simply replays on reload */
     }
 
-    setPlaying(true);
+    const rafId = requestAnimationFrame(() => {
+      setPlaying(true);
+    });
+    return () => cancelAnimationFrame(rafId);
   }, [prefersReducedMotion]);
 
   return (

@@ -86,7 +86,10 @@ function FooterStitch() {
   const triggerRef = useRef<ScrollTrigger | null>(null);
   const drawnRef = useRef(false);
   const reducedRef = useRef(reduced);
-  reducedRef.current = reduced;
+
+  useEffect(() => {
+    reducedRef.current = reduced;
+  }, [reduced]);
 
   const build = useCallback(() => {
     const wrap = wrapRef.current;

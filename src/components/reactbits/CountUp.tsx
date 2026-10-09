@@ -48,13 +48,12 @@ export function CountUp({
 
   const spanRef = useRef<HTMLSpanElement | null>(null);
   const [started, setStarted] = useState(false);
-  const [display, setDisplay] = useState(reduced ? end : 0);
+  const [display, setDisplay] = useState(0);
+
+  const displayValue = reduced ? end : display;
 
   useEffect(() => {
-    if (reduced) {
-      setDisplay(end);
-      return;
-    }
+    if (reduced) return;
 
     const el = spanRef.current;
     if (el === null) return;
@@ -89,7 +88,7 @@ export function CountUp({
 
   return (
     <span ref={spanRef} data-numeric className={cn("tabular-nums", className)}>
-      {formatter.format(display)}
+      {formatter.format(displayValue)}
       {suffix}
     </span>
   );

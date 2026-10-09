@@ -11,7 +11,7 @@
 import { motion } from "motion/react";
 
 import { fabricTextureStyle } from "@/components/fabrics/FabricTexture";
-import { fabrics, getBox } from "@/lib/data";
+import { boxCapacityFor, boxSlotCount, fabrics, getBox } from "@/lib/data";
 import { blockedReason, remaining, ruleString } from "@/lib/slots";
 import { useGiftStore } from "@/store/gift";
 import { cn } from "@/lib/cn";
@@ -38,6 +38,15 @@ export function StepFabrics() {
   }
 
   const room = remaining(selectedFabrics, box);
+  const totalSlotsLeft = Math.max(0, boxSlotCount(box) - selectedFabrics.length);
+
+  const slotBreakdownParts: string[] = [];
+  if (boxCapacityFor(box, "shirting") > 0) {
+    slotBreakdownParts.push(`${room.shirting} shirting`);
+  }
+  if (boxCapacityFor(box, "suiting") > 0) {
+    slotBreakdownParts.push(`${room.suiting} suiting`);
+  }
 
   return (
     <section
@@ -50,9 +59,11 @@ export function StepFabrics() {
       </div>
 
       <p className="text-[0.9375rem] text-chalk">
-        {room.shirting} shirting and {room.suiting} suiting{" "}
-        {room.shirting + room.suiting === 1 ? "slot" : "slots"} left in the{" "}
-        {box.name}
+        {totalSlotsLeft === 0
+          ? `All slots filled in ${box.name}`
+          : `${slotBreakdownParts.join(" and ")} ${
+              totalSlotsLeft === 1 ? "slot" : "slots"
+            } left in ${box.name}`}
       </p>
 
       <ul className="flex flex-wrap gap-3">

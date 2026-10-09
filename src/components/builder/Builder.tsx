@@ -11,7 +11,7 @@
  * opens the bag drawer.
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LayoutGroup } from "motion/react";
 
 import { SectionShell } from "@/components/sections/SectionShell";
@@ -32,7 +32,7 @@ export function Builder() {
   const addToBag = useGiftStore((state) => state.addToBag);
   const openBag = useGiftStore((state) => state.openBag);
 
-  const [ribbonTied, setRibbonTied] = useState(false);
+  const [tiedSelectionKey, setTiedSelectionKey] = useState<string | null>(null);
 
   const box = getBox(selectedBox);
   const complete =
@@ -42,16 +42,14 @@ export function Builder() {
       ? "Choose a box to continue"
       : missingString(box, selectedFabrics);
 
-  // A new box or a new selection means the old ribbon no longer applies.
-  useEffect(() => {
-    setRibbonTied(false);
-  }, [selectedBox, selectedFabrics]);
+  const currentSelectionKey = `${selectedBox ?? ""}:${selectedFabrics.join("+")}`;
+  const ribbonTied = tiedSelectionKey !== null && tiedSelectionKey === currentSelectionKey;
 
   const handleAddToBag = () => {
     if (!complete) return;
     const lineId = addToBag();
     if (lineId === null) return;
-    setRibbonTied(true);
+    setTiedSelectionKey(currentSelectionKey);
     openBag();
   };
 

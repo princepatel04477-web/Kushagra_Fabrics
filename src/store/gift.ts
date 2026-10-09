@@ -168,7 +168,8 @@ function addFabricToSelection(
     }
   }
 
-  return [];
+  // If the fabric cannot fit in the box at all, leave the existing selection untouched.
+  return [...selectedFabrics];
 }
 
 /* ------------------------------------------------------------------ store -- */

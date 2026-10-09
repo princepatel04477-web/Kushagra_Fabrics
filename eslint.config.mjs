@@ -1,14 +1,5 @@
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-import { FlatCompat } from "@eslint/eslintrc";
+import nextConfig from "eslint-config-next";
 import tseslint from "typescript-eslint";
-
-const currentDirectory = dirname(fileURLToPath(import.meta.url));
-
-const compat = new FlatCompat({
-  baseDirectory: currentDirectory,
-});
 
 const eslintConfig = [
   {
@@ -21,7 +12,7 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
-  ...compat.extends("next/core-web-vitals"),
+  ...nextConfig,
   ...tseslint.configs.recommended,
   {
     files: ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.mjs"],

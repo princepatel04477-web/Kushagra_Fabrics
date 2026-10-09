@@ -141,7 +141,10 @@ export function MadeGallery() {
   });
   const tweenRef = useRef<gsap.core.Tween | null>(null);
   const reducedRef = useRef(reduced);
-  reducedRef.current = reduced;
+
+  useEffect(() => {
+    reducedRef.current = reduced;
+  }, [reduced]);
 
   /**
    * Position every card from the current scroll offset. Each card's raw x
@@ -230,15 +233,18 @@ export function MadeGallery() {
     const track = trackRef.current;
     if (track === null) return;
     const onWheel = (event: WheelEvent) => {
+      // Only capture wheel when horizontal scrolling intent is present (trackpad horizontal swipe or shiftKey)
+      // Never trap normal vertical page scrolling.
+      const isHorizontalIntent =
+        Math.abs(event.deltaX) > Math.abs(event.deltaY) || event.shiftKey;
+      if (!isHorizontalIntent) return;
+
       event.preventDefault();
       event.stopPropagation();
       const state = stateRef.current;
       stopTween();
       state.velocity = 0;
-      const delta =
-        Math.abs(event.deltaY) >= Math.abs(event.deltaX)
-          ? event.deltaY
-          : event.deltaX;
+      const delta = event.deltaX !== 0 ? event.deltaX : event.deltaY;
       state.scrollX += delta;
       state.dirty = true;
     };
@@ -302,7 +308,7 @@ export function MadeGallery() {
       id="made"
       heading="What he made of it"
       intro="Every one of these started as a length of cloth in a Kushagra box."
-      contentClassName="relative left-1/2 w-screen -translate-x-1/2"
+      contentClassName="relative left-1/2 w-screen max-w-full -translate-x-1/2 overflow-hidden"
     >
       <div
         ref={trackRef}

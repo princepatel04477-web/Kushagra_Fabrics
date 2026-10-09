@@ -14,10 +14,11 @@
  * Lenis through the caller so there is still only one scroll source.
  */
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 
+import { useMounted } from "@/lib/useMounted";
 import { cn } from "@/lib/cn";
 import { color, easeTailorBezier } from "@/lib/tokens";
 
@@ -61,11 +62,7 @@ export function StaggeredMenu({
   const menuId = useId();
   const panelRef = useRef<HTMLDivElement | null>(null);
   const returnFocusTo = useRef<HTMLElement | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   // Focus trap, Escape to close, focus restored to the trigger on close.
   useEffect(() => {
