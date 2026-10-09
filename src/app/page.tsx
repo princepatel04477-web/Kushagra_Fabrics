@@ -29,7 +29,7 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
               <ScrollLink
                 href="#builder"
-                className="inline-flex h-12 items-center rounded-pill bg-red px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
+                className="inline-flex h-12 items-center rounded-pill bg-red-deep px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
               >
                 Build a gift
               </ScrollLink>

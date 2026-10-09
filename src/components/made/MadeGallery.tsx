@@ -263,6 +263,8 @@ export function MadeGallery() {
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
+  // The handler only advances the offset and records velocity; the rAF physics
+  // loop is the single place cards are measured and written.
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     const state = stateRef.current;
     if (!state.dragging) return;
@@ -330,6 +332,7 @@ export function MadeGallery() {
               width={CARD_W}
               height={400}
               loading="lazy"
+              decoding="async"
               draggable={false}
               className="h-[400px] w-[300px] rounded-m border border-line object-cover"
             />

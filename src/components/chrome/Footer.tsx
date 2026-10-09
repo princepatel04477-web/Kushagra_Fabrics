@@ -189,6 +189,8 @@ export function Footer() {
               alt="Kushagra"
               width={204}
               height={141}
+              loading="lazy"
+              decoding="async"
               className="h-auto w-[164px]"
             />
             <p className="text-[1.0625rem] text-chalk">
@@ -203,20 +205,20 @@ export function Footer() {
             {LINK_COLUMNS.map((column) => (
               <div key={column.title} className="flex flex-col gap-4">
                 <p className="font-semibold">{column.title}</p>
-                <ul className="flex flex-col gap-3 text-[0.9375rem] text-chalk">
+                <ul className="flex flex-col text-[0.9375rem] text-chalk">
                   {column.links.map((link) => (
                     <li key={link.label}>
                       {link.smooth === true ? (
                         <ScrollLink
                           href={link.href}
-                          className="transition-colors duration-300 hover:text-suiting"
+                          className="inline-flex min-h-[44px] items-center transition-colors duration-300 hover:text-suiting"
                         >
                           {link.label}
                         </ScrollLink>
                       ) : (
                         <a
                           href={link.href}
-                          className="transition-colors duration-300 hover:text-suiting"
+                          className="inline-flex min-h-[44px] items-center transition-colors duration-300 hover:text-suiting"
                         >
                           {link.label}
                         </a>
@@ -238,6 +240,8 @@ export function Footer() {
               alt=""
               width={30}
               height={36}
+              loading="lazy"
+              decoding="async"
               className="h-9 w-[30px]"
             />
           </CircularText>
@@ -246,7 +250,7 @@ export function Footer() {
         <div className="col-span-12 mt-16 lg:mt-24">
           <TextPressure
             text="KUSHAGRA"
-            className="font-display text-suiting text-[clamp(2.75rem,17vw,15rem)]"
+            className="font-display text-suiting text-[clamp(2.5rem,16vw,14rem)]"
           />
         </div>
 
@@ -254,27 +258,33 @@ export function Footer() {
           <p data-numeric>© {year} Kushagra. All rights reserved.</p>
 
           <nav aria-label="Legal">
-            <ul className="flex gap-x-8 gap-y-2">
+            <ul className="flex gap-x-4">
               <li>
-                <a href="#privacy" className="transition-colors duration-300 hover:text-suiting">
+                <a
+                  href="#privacy"
+                  className="inline-flex min-h-[44px] items-center px-2 transition-colors duration-300 hover:text-suiting"
+                >
                   Privacy
                 </a>
               </li>
               <li>
-                <a href="#terms" className="transition-colors duration-300 hover:text-suiting">
+                <a
+                  href="#terms"
+                  className="inline-flex min-h-[44px] items-center px-2 transition-colors duration-300 hover:text-suiting"
+                >
                   Terms
                 </a>
               </li>
             </ul>
           </nav>
 
-          <ul className="flex flex-wrap gap-x-8 gap-y-2">
+          <ul className="flex flex-wrap gap-x-4">
             <li>
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noreferrer"
-                className="transition-colors duration-300 hover:text-suiting"
+                className="inline-flex min-h-[44px] items-center px-2 transition-colors duration-300 hover:text-suiting"
               >
                 WhatsApp
               </a>
@@ -283,7 +293,7 @@ export function Footer() {
               <a
                 href={`tel:${PHONE_TEL}`}
                 data-numeric
-                className="transition-colors duration-300 hover:text-suiting"
+                className="inline-flex min-h-[44px] items-center px-2 transition-colors duration-300 hover:text-suiting"
               >
                 {PHONE_DISPLAY}
               </a>
@@ -291,7 +301,7 @@ export function Footer() {
             <li>
               <a
                 href={`mailto:${EMAIL}`}
-                className="transition-colors duration-300 hover:text-suiting"
+                className="inline-flex min-h-[44px] items-center px-2 transition-colors duration-300 hover:text-suiting"
               >
                 {EMAIL}
               </a>

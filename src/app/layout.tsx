@@ -77,6 +77,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en-IN" className={`${display.variable} ${body.variable}`}>
       <body>
+        {/* React hoists these into <head>. Fonts load through next/font with
+            font-display: swap; the hints warm the connection up front. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <a className="skip-link" href="#main">
           Skip to content
         </a>

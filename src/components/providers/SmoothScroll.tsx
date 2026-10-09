@@ -105,11 +105,20 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     };
   }, [prefersReducedMotion]);
 
-  // Web fonts change every section's height; measure again once they land.
+  // Web fonts and late images change section heights; measure again once
+  // they land. "load" fires after the eager images; lazy images below the
+  // fold reserve their space with width/height, so they cannot shift layout.
   useEffect(() => {
     void document.fonts.ready.then(() => {
       ScrollTrigger.refresh();
     });
+    const handleLoad = () => ScrollTrigger.refresh();
+    if (document.readyState === "complete") {
+      handleLoad();
+    } else {
+      window.addEventListener("load", handleLoad);
+    }
+    return () => window.removeEventListener("load", handleLoad);
   }, []);
 
   const scrollTo = useCallback((target: string | HTMLElement) => {

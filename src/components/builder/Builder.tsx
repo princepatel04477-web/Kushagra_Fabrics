@@ -75,7 +75,7 @@ export function Builder() {
                     type="button"
                     disabled={!complete}
                     onClick={handleAddToBag}
-                    className="inline-flex h-14 items-center rounded-pill bg-red px-9 text-[1.0625rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="inline-flex h-14 items-center rounded-pill bg-red-deep px-9 text-[1.0625rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Add to bag
                   </button>

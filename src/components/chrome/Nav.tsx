@@ -195,7 +195,7 @@ export function Nav() {
                     duration: 0.3,
                     ease: easeTailorBezier,
                   }}
-                  className="absolute -right-1 -top-1 grid h-5 min-w-[20px] place-items-center rounded-pill bg-red px-1 text-[0.6875rem] font-semibold leading-none text-white"
+                  className="absolute -right-1 -top-1 grid h-5 min-w-[20px] place-items-center rounded-pill bg-suiting px-1 text-[0.6875rem] font-semibold leading-none text-white"
                 >
                   {bagCount}
                 </motion.span>
@@ -208,7 +208,7 @@ export function Nav() {
             onClick={() => {
               handleBarAction("#builder");
             }}
-            className="hidden h-10 shrink-0 items-center rounded-pill bg-red px-5 text-[0.9375rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90 min-[900px]:inline-flex"
+            className="hidden h-10 shrink-0 items-center rounded-pill bg-red-deep px-5 text-[0.9375rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90 min-[900px]:inline-flex"
           >
             Build a gift
           </button>
@@ -224,7 +224,7 @@ export function Nav() {
                   onClick={() => {
                     handleBarAction("#builder");
                   }}
-                  className="inline-flex h-12 w-full items-center justify-center rounded-pill bg-red px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
+                  className="inline-flex h-12 w-full items-center justify-center rounded-pill bg-red-deep px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
                 >
                   Build a gift
                 </button>

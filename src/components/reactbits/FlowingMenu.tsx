@@ -84,6 +84,8 @@ function MarqueeGroup({ text, images }: { readonly text: string; readonly images
           alt=""
           width={56}
           height={56}
+          loading="lazy"
+          decoding="async"
           className="h-14 w-14 rounded-s object-cover"
         />
       ))}

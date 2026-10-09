@@ -11,7 +11,9 @@
   --color-shirting: #eef1f4; /* page background */
   --color-paper: #f7f8fa; /* raised surfaces */
   --color-suiting: #1b2433; /* main text, dark sections */
-  --color-red: #e63339; /* logo, ribbon, the single primary button, errors */
+  --color-red: #e63339; /* logo, ribbon — non-text red */
+  --color-red-deep: #c92b31; /* button fills + error text on light surfaces (AA with white and shirting) */
+  --color-red-soft: #ffa0a3; /* error text on dark surfaces (AA with suiting) */
   --color-thread: #f28c3c; /* dashed stitch lines and sparks only, never text */
   --color-chalk: #5e6773; /* secondary text */
   --color-line: rgb(27 36 51 / 0.14);

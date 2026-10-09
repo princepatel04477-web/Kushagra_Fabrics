@@ -24,7 +24,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "motion/react";
 
 import { SectionShell } from "@/components/sections/SectionShell";
-import { color, layout } from "@/lib/tokens";
+import { color } from "@/lib/tokens";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -137,7 +137,9 @@ export function HowItWorks() {
     }
 
     const wrapRect = wrap.getBoundingClientRect();
-    const isMobile = window.innerWidth < layout.mobileBreakpoint;
+    // Match the CSS: steps stack until the `lg` breakpoint, so the stitch is
+    // vertical below 1024px and diagonal above.
+    const isMobile = window.innerWidth < 1024;
 
     let d: string;
     let anchors: Point[];
@@ -289,15 +291,6 @@ export function HowItWorks() {
             strokeLinecap="round"
             mask="url(#how-stitch-mask)"
           />
-          <g ref={needleRef} style={{ opacity: 0 }}>
-            <line
-              ref={needleTrailRef}
-              stroke={color.suiting}
-              strokeWidth={2}
-              strokeLinecap="round"
-            />
-            <circle ref={needleDotRef} r={4} fill={color.suiting} />
-          </g>
         </svg>
 
         <ol className="relative z-10 flex flex-col gap-20 lg:gap-0">
@@ -316,7 +309,7 @@ export function HowItWorks() {
                 ref={(el) => {
                   stepRefs.current[index] = el;
                 }}
-                className="flex flex-col"
+                className="flex flex-col bg-shirting"
               >
                 <span
                   ref={(el) => {
@@ -337,12 +330,29 @@ export function HowItWorks() {
                   width={400}
                   height={240}
                   loading="lazy"
+                  decoding="async"
                   className="mt-6 h-[240px] w-full max-w-[400px] rounded-m border border-line object-cover"
                 />
               </article>
             </li>
           ))}
         </ol>
+
+        {/* The needle rides above the steps so it never hides behind them. */}
+        <svg
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-20 h-full w-full overflow-visible"
+        >
+          <g ref={needleRef} style={{ opacity: 0 }}>
+            <line
+              ref={needleTrailRef}
+              stroke={color.suiting}
+              strokeWidth={2}
+              strokeLinecap="round"
+            />
+            <circle ref={needleDotRef} r={4} fill={color.suiting} />
+          </g>
+        </svg>
       </div>
     </SectionShell>
   );

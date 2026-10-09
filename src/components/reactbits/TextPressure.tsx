@@ -81,6 +81,8 @@ export function TextPressure({ text, className }: TextPressureProps) {
     };
     measure();
 
+    // Throttled by design: the handler only stores the latest position; all
+    // measurement and style writes happen once per frame in the rAF loop.
     const handleMove = (event: PointerEvent) => {
       if (event.pointerType === "touch") return;
       pointer.x = event.clientX;

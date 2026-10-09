@@ -206,7 +206,7 @@ function Field({ id, label, error, children }: FieldProps) {
         "aria-describedby": error !== undefined ? errorId : undefined,
       })}
       {error !== undefined ? (
-        <p id={errorId} className="text-[0.875rem] text-red">
+        <p id={errorId} aria-live="polite" className="text-[0.875rem] text-red-soft">
           {error}
         </p>
       ) : null}
@@ -217,7 +217,7 @@ function Field({ id, label, error, children }: FieldProps) {
 const inputClass = (hasError: boolean) =>
   cn(
     "h-12 w-full rounded-s border bg-paper/[0.06] px-4 text-[1rem] text-shirting",
-    "placeholder:text-shirting/40 focus-visible:outline-shirting",
+    "placeholder:text-shirting/50 focus-visible:outline-shirting",
     hasError ? "border-red" : "border-shirting/25",
   );
 
@@ -495,7 +495,7 @@ export function Corporate() {
                 <div className="sm:col-span-2">
                   <button
                     type="submit"
-                    className="inline-flex h-12 items-center rounded-pill bg-red px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
+                    className="inline-flex h-12 items-center rounded-pill bg-red-deep px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
                   >
                     Send enquiry
                   </button>
@@ -511,7 +511,7 @@ export function Corporate() {
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noreferrer"
-            className="font-medium text-shirting underline decoration-shirting/40 decoration-1 underline-offset-[6px] transition-colors duration-300 hover:decoration-shirting"
+            className="inline-block py-2 font-medium text-shirting underline decoration-shirting/40 decoration-1 underline-offset-[6px] transition-colors duration-300 hover:decoration-shirting"
           >
             Message us on WhatsApp
           </a>{" "}
@@ -519,7 +519,7 @@ export function Corporate() {
           <a
             href={`tel:${PHONE_TEL}`}
             data-numeric
-            className="font-medium text-shirting underline decoration-shirting/40 decoration-1 underline-offset-[6px] transition-colors duration-300 hover:decoration-shirting"
+            className="inline-block py-2 font-medium text-shirting underline decoration-shirting/40 decoration-1 underline-offset-[6px] transition-colors duration-300 hover:decoration-shirting"
           >
             call {PHONE_DISPLAY}
           </a>

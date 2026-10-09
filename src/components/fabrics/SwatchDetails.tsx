@@ -85,7 +85,7 @@ export function SwatchDetails({ fabric, onUse }: SwatchDetailsProps) {
           <button
             type="button"
             onClick={() => onUse(fabric.id)}
-            className="inline-flex h-12 items-center rounded-pill bg-red px-7 font-body text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
+            className="inline-flex h-12 items-center rounded-pill bg-red-deep px-7 font-body text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
           >
             Use in my box
           </button>

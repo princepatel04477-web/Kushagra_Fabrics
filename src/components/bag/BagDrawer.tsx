@@ -194,7 +194,7 @@ export function BagDrawer() {
                         closeBag();
                         scrollTo("#builder");
                       }}
-                      className="inline-flex h-12 items-center rounded-pill bg-red px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
+                      className="inline-flex h-12 items-center rounded-pill bg-red-deep px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
                     >
                       Build a box
                     </button>
@@ -233,7 +233,7 @@ export function BagDrawer() {
                 <button
                   type="button"
                   onClick={() => setCheckout(true)}
-                  className="mt-4 inline-flex h-12 w-full items-center justify-center rounded-pill bg-red px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
+                  className="mt-4 inline-flex h-12 w-full items-center justify-center rounded-pill bg-red-deep px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
                 >
                   Checkout
                 </button>

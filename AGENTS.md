@@ -46,7 +46,9 @@ Defined once in `src/app/globals.css` under `@theme`, and mirrored as a typed co
 | `--color-shirting` | `#EEF1F4`                | page background                                        |
 | `--color-paper`    | `#F7F8FA`                | raised surfaces (nav bar, cards)                       |
 | `--color-suiting`  | `#1B2433`                | main text, dark sections, nav pill fill                |
-| `--color-red`      | `#E63339`                | **only**: logo, ribbon, the one primary button, errors |
+| `--color-red`      | `#E63339`                | **only**: logo and ribbons (non-text red)              |
+| `--color-red-deep` | `#C92B31`                | button fills and error text on light surfaces — AA with white and shirting |
+| `--color-red-soft` | `#FFA0A3`                | error text on dark (`--color-suiting`) surfaces — AA with suiting |
 | `--color-thread`   | `#F28C3C`                | **only**: dashed stitch lines and sparks. Never text   |
 | `--color-chalk`    | `#5E6773`                | secondary text (AA on shirting at 17px)                |
 | `--color-line`     | `rgb(27 36 51 / 0.14)`   | 1px borders and rules                                  |
@@ -105,9 +107,15 @@ component is in the wrong place.
 
 Rules:
 
-- Animate **transform and opacity only**.
-  One documented exception: the nav bar's compact state is a CSS `transition` on
-  `height`/`padding` — a single fixed element, on a threshold cross, never per frame.
+- Animate **transform and opacity only**. Documented exceptions:
+  - The nav bar's compact state is a CSS `transition` on `height`/`padding` —
+    a single fixed element, on a threshold cross, never per frame.
+  - The stitch lines (how-it-works, footer) reveal via `stroke-dashoffset`
+    inside an SVG mask, and the needle rides the path through SVG geometry —
+    drawing primitives, not layout.
+  - The footer wordmark animates the variable font's weight axis alongside
+    `scaleY` — it needs a variable `wght` axis, so Bodoni Moda loads without
+    a static weight list.
 - `prefers-reduced-motion`: **every** effect has a static end state.
   `<MotionConfig reducedMotion="user">` covers motion; GSAP and Lenis are guarded
   explicitly with `useReducedMotion()` (in `SmoothScroll`, which never constructs Lenis
@@ -176,7 +184,7 @@ and restyle before committing.
 - `useEffect` + `gsap.to` for something that is really a scroll trigger.
 - `motion` for scroll-linked animation; GSAP for mount/unmount.
 - Gradients, drop shadows, blur-on-text, glassmorphism beyond the nav's `backdrop-blur`.
-- Red on anything that is not the logo, a ribbon, the single primary button, or an error.
+- Red on anything that is not the logo, a ribbon, the single primary button (`red-deep`), or an error (`red-deep` on light, `red-soft` on dark).
 - `--color-thread` as a text colour.
 - All-caps eyebrows, italic words inside headings, arrows in button labels, emoji.
 - Centred symmetric section layouts.

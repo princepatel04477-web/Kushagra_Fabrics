@@ -96,7 +96,7 @@ export function CheckoutPanel({ onBack }: CheckoutPanelProps) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex h-12 items-center justify-center rounded-pill bg-red px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
+        className="inline-flex h-12 items-center justify-center rounded-pill bg-red-deep px-7 text-[1rem] font-semibold text-white transition-opacity duration-300 hover:opacity-90"
       >
         Order on WhatsApp
       </a>
