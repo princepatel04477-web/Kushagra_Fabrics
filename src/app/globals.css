@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Kushagra design tokens                                              */
+/* Mirrored for JS animation code in src/lib/tokens.ts                 */
+/* ------------------------------------------------------------------ */
+@theme {
+  --color-shirting: #eef1f4;
+  --color-paper: #f7f8fa;
+  --color-suiting: #1b2433;
+  --color-red: #e63339;
+  --color-thread: #f28c3c;
+  --color-chalk: #5e6773;
+  --color-line: rgb(27 36 51 / 0.14);
+
+  --ease-tailor: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --radius-s: 6px;
+  --radius-m: 14px;
+  --radius-pill: 999px;
+}
+
+/* next/font variables are set on <html> by src/app/layout.tsx */
+@theme inline {
+  --font-display: var(--font-kushagra-display);
+  --font-body: var(--font-kushagra-body);
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: auto; /* Lenis is the only smooth-scroll source */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-shirting);
+    color: var(--color-suiting);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 8vw, 7.5rem);
+  }
+
+  h2 {
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+  }
+
+  h3 {
+    font-size: 1.75rem;
+  }
+
+  p {
+    max-width: 62ch;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-suiting);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background-color: var(--color-suiting);
+    color: var(--color-shirting);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout utilities                                                    */
+/* ------------------------------------------------------------------ */
+@utility shell {
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 64px);
+}
+
+@utility grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(16px, 2.5vw, 32px);
+}
+
+@utility section-pad {
+  padding-block: clamp(96px, 14vw, 180px);
+}
+
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Dashed tailor stitch rule — thread colour, never used for text */
+@utility stitch-rule {
+  border: 0;
+  height: 0;
+  border-top: 2px dashed var(--color-thread);
+}
+
+/* ------------------------------------------------------------------ */
+/* Skip link                                                           */
+/* ------------------------------------------------------------------ */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-suiting);
+  color: var(--color-shirting);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-300%);
+  transition: transform 0.25s var(--ease-tailor);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ------------------------------------------------------------------ */
+/* Lenis — the single smooth-scroll source                             */
+/* ------------------------------------------------------------------ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion — static fallbacks everywhere                        */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
