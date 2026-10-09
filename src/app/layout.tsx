@@ -10,7 +10,9 @@ import "./globals.css";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  // No weight list: Bodoni Moda is a variable font (wght 400–900), and the
+  // footer wordmark animates the weight axis per letter. Static instances
+  // would snap between weights instead of moving smoothly.
   style: ["normal", "italic"],
   variable: "--font-bodoni-moda",
   display: "swap",

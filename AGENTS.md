@@ -135,7 +135,11 @@ our tokens — React Bits' default colours must never survive contact with this 
 | `TiltedCard`     | `boxes/BoxTiers.tsx` — box tier cards | 4     | ✅     |
 | `TextType`       | `builder/GiftCard.tsx` — the note card typing | 4     | ✅     |
 | `ClickSpark`     | `builder/Builder.tsx` — Add to bag sparks (thread colour) | 4 | ✅ |
-| `Magnet`         | `builder/Builder.tsx` — Add to bag magnetic pull | 4     | ✅     |
+| `Magnet`         | `builder/Builder.tsx` — Add to bag magnetic pull                  | 4     | ✅     |
+| `CountUp`        | `corporate/Corporate.tsx` — corporate stats row                   | 6     | ✅     |
+| `LogoLoop`       | `corporate/Corporate.tsx` — client wordmark marquee               | 6     | ✅     |
+| `CircularText`   | `chrome/Footer.tsx` — rotating Select-Stitch-Stand-Out badge      | 6     | ✅     |
+| `TextPressure`   | `chrome/Footer.tsx` — giant KUSHAGRA wordmark (variable weight)   | 6     | ✅     |
 
 Install with
 `npx shadcn@latest add https://reactbits.dev/r/<Name>-TS-TW`

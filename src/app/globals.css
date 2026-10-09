@@ -218,6 +218,18 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Logo loop — the corporate client marquee.
+   The track holds two identical copies and shifts by exactly one copy width
+   (--loop-shift, set from JS measurements), so the loop is seamless.
+--------------------------------------------------------------------------- */
+
+@keyframes logo-loop {
+  to {
+    transform: translate3d(var(--loop-shift, -50%), 0, 0);
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Radii: `rounded-s` has to be claimed back.
    Tailwind ships a bare `rounded-s` of its own — the logical start radius,
    0.25rem — and it is emitted after the one our --radius-s token generates,
