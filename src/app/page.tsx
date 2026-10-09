@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Builder } from "@/components/builder/Builder";
 import { BoxTiers } from "@/components/boxes/BoxTiers";
 import { ScrollLink } from "@/components/chrome/ScrollLink";
+import { HowItWorks } from "@/components/how/HowItWorks";
+import { MadeGallery } from "@/components/made/MadeGallery";
 import { Occasions } from "@/components/occasions/Occasions";
 import { SwatchBook } from "@/components/fabrics/SwatchBook";
 import { SectionShell } from "@/components/sections/SectionShell";
@@ -63,17 +65,9 @@ export default function HomePage() {
 
         <Builder />
 
-        <SectionShell
-          id="how"
-          heading="How it works"
-          intro="You choose. We pack and send. He takes it to his tailor. Three steps, about a month."
-        />
+        <HowItWorks />
 
-        <SectionShell
-          id="made"
-          heading="What he made of it"
-          intro="Photographs sent back after the first fitting, from brothers and their tailors."
-        />
+        <MadeGallery />
 
         <SectionShell
           id="corporate"
