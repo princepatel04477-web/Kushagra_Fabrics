@@ -1,0 +1,314 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Kushagra design tokens
+   Every value here is mirrored in src/lib/tokens.ts for JS animation code.
+   Keep both files in sync.
+--------------------------------------------------------------------------- */
+
+@theme {
+  /* Surfaces */
+  --color-shirting: #eef1f4; /* page background */
+  --color-paper: #f7f8fa; /* raised surfaces */
+  --color-suiting: #1b2433; /* main text, dark sections */
+  --color-red: #e63339; /* logo, ribbon, the single primary button, errors */
+  --color-thread: #f28c3c; /* dashed stitch lines and sparks only, never text */
+  --color-chalk: #5e6773; /* secondary text */
+  --color-line: rgb(27 36 51 / 0.14);
+
+  /* Motion */
+  --ease-tailor: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Radii */
+  --radius-s: 6px;
+  --radius-m: 14px;
+  --radius-pill: 999px;
+
+  /* Layout (exposed for utilities, not for spacing utilities) */
+  --container-shell: 1320px;
+}
+
+/* next/font variables are injected by src/app/layout.tsx */
+@theme inline {
+  --font-display: var(--font-bodoni-moda);
+  --font-body: var(--font-cabin);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--color-shirting);
+    color: var(--color-suiting);
+    font-family: var(--font-body), system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  blockquote {
+    font-family: var(--font-display), Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 8vw, 7.5rem);
+  }
+
+  h2 {
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+  }
+
+  h3 {
+    font-size: 1.75rem;
+    line-height: 1.08;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  p {
+    max-width: 62ch;
+    text-wrap: pretty;
+  }
+
+  ul,
+  ol {
+    list-style: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* One focus ring for the whole site: 2px suiting, 3px offset. */
+  :focus-visible {
+    outline: 2px solid var(--color-suiting);
+    outline-offset: 3px;
+    border-radius: var(--radius-s);
+  }
+
+  ::selection {
+    background-color: var(--color-suiting);
+    color: var(--color-shirting);
+  }
+
+  /* Every number in the UI lines up in columns. */
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Layout utilities
+   12-column shell, max 1320px, cloth-folded-left content.
+--------------------------------------------------------------------------- */
+
+@utility grid-shell {
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 64px);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(16px, 2vw, 28px);
+  row-gap: 0;
+}
+
+@utility section-pad {
+  padding-block: clamp(96px, 14vw, 180px);
+}
+
+@utility stack-s {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@utility stack-m {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@utility stack-l {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* The dashed stitch line. Thread colour, never text. */
+@utility stitch-line {
+  height: 1px;
+  width: 100%;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-thread) 0,
+    var(--color-thread) 9px,
+    transparent 9px,
+    transparent 18px
+  );
+}
+
+@utility stitch-line-vertical {
+  width: 1px;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-thread) 0,
+    var(--color-thread) 9px,
+    transparent 9px,
+    transparent 18px
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   Radii: `rounded-s` has to be claimed back.
+   Tailwind ships a bare `rounded-s` of its own — the logical start radius,
+   0.25rem — and it is emitted after the one our --radius-s token generates,
+   so on its own it would win the cascade on two corners. This rule is
+   unlayered, and unlayered declarations outrank every cascade layer, so
+   `rounded-s` reliably means 6px here. `rounded-m` and `rounded-pill` do not
+   collide with anything.
+--------------------------------------------------------------------------- */
+
+.rounded-s {
+  border-radius: var(--radius-s);
+}
+
+/* ---------------------------------------------------------------------------
+   Skip link
+--------------------------------------------------------------------------- */
+
+@utility skip-link {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-suiting);
+  color: var(--color-shirting);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  transform: translateY(-250%);
+  transition: transform 0.24s var(--ease-tailor);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------------------
+   Lenis (the only smooth-scroll source)
+   Mirrors lenis/dist/lenis.css so there is no import-order dependency.
+--------------------------------------------------------------------------- */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis [data-lenis-prevent],
+.lenis [data-lenis-prevent-wheel],
+.lenis [data-lenis-prevent-touch] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+.lenis.lenis-autoToggle {
+  transition-property: overflow;
+  transition-duration: 1ms;
+  transition-behavior: allow-discrete;
+}
+
+/* Fallback scroll lock for reduced-motion users, where Lenis never runs. */
+html[data-scroll-locked="true"],
+html[data-scroll-locked="true"] body {
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion: every effect falls back to a static end state.
+--------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .skip-link {
+    transition: none;
+  }
+}

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100" height="120" role="img" aria-label="Kushagra">
+  <defs>
+    <mask id="kushagra-mark-stem" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="120">
+      <rect x="0" y="0" width="100" height="120" fill="#ffffff"/>
+      <rect x="21.5" y="0" width="5" height="120" fill="#000000"/>
+    </mask>
+  </defs>
+  <g mask="url(#kushagra-mark-stem)">
+    <rect x="16" y="6" width="16" height="108" fill="#E63339"/>
+    <polygon points="26.82,46.64 80.82,8.64 91.18,23.36 37.18,61.36" fill="#E63339"/>
+    <polygon points="37.71,59.05 93.71,105.05 82.29,118.95 26.29,72.95" fill="#E63339"/>
+  </g>
+  <path
+    d="M24 12 V108"
+    fill="none"
+    stroke="#F28C3C"
+    stroke-width="3"
+    stroke-linecap="butt"
+    stroke-dasharray="6.4 9.6"
+  />
+</svg>
