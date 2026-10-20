@@ -403,662 +403,360 @@ html[data-scroll-locked="true"] body {
 }
 
 /* ---------------------------------------------------------------------------
-   Hero unboxing (home/Hero.tsx, home/HeroBox.tsx).
+   Hero (home/hero/Hero.tsx).
 
-   Every moving part reads a 0 → 1 progress variable set on .hero; GSAP scrubs
-   the variables, CSS turns them into transforms and opacity. The defaults are
-   the open end state — what no-JS and reduced-motion visitors see. With JS
-   running and motion allowed (html[data-js]), the box starts closed.
+   Static by default — what no-JS, reduced-motion, no-WebGL and low-memory
+   visitors see: the headline beside a still of the open box, the three
+   cloths named. With JS running and motion allowed, the film styles below
+   take over: the closed still holds the first frame until the WebGL canvas
+   fades in over it, and Hero.tsx scrubs --copy-out, --end-in and --film
+   (0 → 1) on .hero as the pinned stage scrolls.
 
-   The lining, linen, tissue-fold and crease gradients are the box and the
-   cloth themselves, drawn the way FabricTexture draws a swatch — the same
-   sanctioned exception to the no-gradient rule.
+   Desktop is ≥ 900px and landscape (keep in step with DESKTOP in
+   Hero.tsx): there the copy sits over a full-bleed stage, and the still
+   lives in a 16:10 frame whose size follows the stage height and whose
+   centre sits at 70% of its width — the same framing as the live camera.
 --------------------------------------------------------------------------- */
 
 .hero {
-  --ribbon: 1;
-  --lid: 1;
-  --lid-away: 1;
-  --tissue: 1;
-  --unfold: 1;
-  --tilt: 1;
-  --panel: 1;
-  --type: 1;
+  --copy-out: 0;
+  --end-in: 1;
+  --film: 1;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  html[data-js] .hero {
-    --ribbon: 0;
-    --lid: 0;
-    --lid-away: 0;
-    --tissue: 0;
-    --unfold: 0;
-    --tilt: 0;
-    --panel: 0;
-    --type: 0;
-  }
-}
-
-/* --- the box ------------------------------------------------------------- */
-
-.hb {
-  --d: calc(var(--w) * 0.6538);
-  --h: calc(var(--w) * 0.2308);
-  --lh: calc(var(--w) * 0.0769);
-  --hp: calc(var(--d) * 1.5);
-  display: grid;
-  place-items: center;
-  perspective: 1600px;
-}
-
-.hb-rig {
+.hero-pin {
   position: relative;
-  width: var(--w);
-  height: var(--d);
-  transform-style: preserve-3d;
-  transform: rotateX(calc(58deg - var(--tilt) * 22deg)) rotateZ(-18deg);
 }
 
-.hb-rig > div {
-  position: absolute;
-}
-
-.hb-face {
-  background-color: var(--color-suiting);
-  background-image:
-    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.03) 0 1px, transparent 1px 4px);
-}
-
-.hb-floor {
-  inset: 0;
-}
-
-/* The box's cast shadow, lying on the ground plane under the floor so it
-   turns and tilts with the box. Part of the drawing, not a UI drop shadow. */
-.hb-shadow {
-  inset: -9% -7% -13% -5%;
-  transform: translate3d(2%, 4%, -1px);
-  background-image: radial-gradient(
-    closest-side,
-    rgb(27 36 51 / 0.2),
-    rgb(27 36 51 / 0.07) 62%,
-    transparent
-  );
-}
-
-.hb-liner {
-  inset: 3%;
-  transform: translateZ(1px);
-  background-color: var(--color-paper);
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgb(27 36 51 / 0.04) 0 1px,
-    transparent 1px 18px
-  );
-}
-
-.hb-wall-front,
-.hb-wall-back {
-  left: 0;
-  width: var(--w);
-  height: var(--h);
-}
-
-.hb-wall-front {
-  top: calc(var(--d) - var(--h));
-  transform-origin: 50% 100%;
-  transform: rotateX(-90deg);
-}
-
-.hb-wall-back {
-  top: 0;
-  transform-origin: 50% 0;
-  transform: rotateX(90deg);
-}
-
-.hb-wall-left,
-.hb-wall-right {
-  top: 0;
-  width: var(--h);
-  height: var(--d);
-}
-
-.hb-wall-left {
-  left: 0;
-  transform-origin: 0 50%;
-  transform: rotateY(-90deg);
-}
-
-.hb-wall-right {
-  left: calc(var(--w) - var(--h));
-  transform-origin: 100% 50%;
-  transform: rotateY(90deg);
-}
-
-/* Light comes from the top left: the right and front walls sit in shade. */
-.hb-wall-right::after,
-.hb-wall-front::after,
-.hb-skirt-right::after,
-.hb-skirt-front::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: rgb(0 0 0 / 0.22);
-}
-
-.hb-bundle {
-  left: 12%;
-  top: 14%;
-  width: 76%;
-  height: 72%;
-  border-radius: var(--radius-s);
-  transform: translateZ(calc(var(--h) * 0.4));
-}
-
-/* Fold lines across the folded length. */
-.hb-bundle::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-image: repeating-linear-gradient(
-    180deg,
-    transparent 0 calc(33.33% - 1px),
-    rgb(0 0 0 / 0.3) calc(33.33% - 1px) 33.33%
-  );
-}
-
-.hb-unfold {
-  left: 18%;
-  width: 64%;
-  top: calc(var(--d) * 0.5 - var(--hp));
-  height: var(--hp);
-  transform-origin: 50% 100%;
-  transform: translateZ(calc(var(--h) * 0.45)) rotateX(-90deg) scaleY(var(--unfold));
-  opacity: calc(1 - min(1, var(--panel) * 6));
-}
-
-/* Creases from the fold, flattening out as the length opens. */
-.hb-unfold::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    180deg,
-    transparent 0 calc(16.66% - 2px),
-    rgb(255 255 255 / 0.16) calc(16.66% - 2px) calc(16.66% - 1px),
-    rgb(0 0 0 / 0.32) calc(16.66% - 1px) 16.66%
-  );
-  opacity: calc(1 - var(--unfold));
-}
-
-.hb-tissue {
-  top: 3%;
-  width: 47%;
-  height: 94%;
-  /* Thin tissue: a touch translucent, with the soft creases of paper that
-     was folded once and opened again. */
-  background-color: rgb(247 248 250 / 0.9);
-  background-image:
-    linear-gradient(115deg, transparent 0 46%, rgb(27 36 51 / 0.06) 46% 46.6%, transparent 46.6%),
-    linear-gradient(72deg, transparent 0 63%, rgb(27 36 51 / 0.035) 63% 63.5%, transparent 63.5%),
-    linear-gradient(160deg, transparent 0 24%, rgb(255 255 255 / 0.7) 24% 25%, transparent 25%),
-    linear-gradient(90deg, rgb(27 36 51 / 0.05), transparent 18%);
-  border: 1px solid var(--color-line);
-}
-
-.hb-tissue-l {
-  left: 3%;
-  transform-origin: 0 50%;
-  transform: translateZ(calc(var(--h) * 0.86)) rotateY(calc(var(--tissue) * -118deg));
-}
-
-.hb-tissue-r {
-  right: 3%;
-  transform-origin: 100% 50%;
-  transform: translateZ(calc(var(--h) * 0.86)) rotateY(calc(var(--tissue) * 118deg));
-}
-
-/* --- the lid ------------------------------------------------------------- */
-
-.hb-lid {
-  left: -2.5%;
-  top: -2.5%;
-  width: 105%;
-  height: 105%;
-  transform-style: preserve-3d;
-  transform-origin: 50% 0;
-  transform:
-    translateZ(calc(var(--h) + var(--lid) * var(--w) * 0.42))
-    translate3d(
-      calc(var(--lid-away) * var(--w) * 0.7),
-      calc(var(--lid-away) * var(--w) * -0.7),
-      calc(var(--lid-away) * var(--w) * 0.3)
-    )
-    rotateX(calc(var(--lid) * 25deg));
-}
-
-.hb-lid > * {
-  position: absolute;
-}
-
-/* Opacity sits on each face, never on the lid group: opacity below 1 on a
-   preserve-3d element flattens its children into one plane. */
-.hb-lid-face {
-  opacity: calc(1 - var(--lid-away));
-}
-
-.hb-lid-top {
-  inset: 0;
-}
-
-.hb-skirt-front,
-.hb-skirt-back {
-  left: 0;
-  width: 100%;
-  height: var(--lh);
-}
-
-.hb-skirt-front {
-  top: calc(100% - var(--lh));
-  transform-origin: 50% 100%;
-  transform: rotateX(90deg);
-}
-
-.hb-skirt-back {
-  top: 0;
-  transform-origin: 50% 0;
-  transform: rotateX(-90deg);
-}
-
-.hb-skirt-left,
-.hb-skirt-right {
-  top: 0;
-  width: var(--lh);
-  height: 100%;
-}
-
-.hb-skirt-left {
-  left: 0;
-  transform-origin: 0 50%;
-  transform: rotateY(90deg);
-}
-
-.hb-skirt-right {
-  left: calc(100% - var(--lh));
-  transform-origin: 100% 50%;
-  transform: rotateY(-90deg);
-}
-
-.hb-skirt-band {
-  position: absolute;
-  background-color: var(--color-red);
-  opacity: calc(1 - var(--ribbon));
-}
-
-.hb-skirt-band-x {
-  left: 68%;
-  width: 9%;
-  top: 0;
-  height: 100%;
-}
-
-.hb-skirt-band-y {
-  top: 64%;
-  height: 12%;
-  left: 0;
-  width: 100%;
-}
-
-.hb-label {
-  left: 12%;
-  top: 16%;
-  width: 40%;
-  height: 34%;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius-s);
-  background-color: var(--color-paper);
-  transform: translateZ(1px);
-  opacity: calc(1 - var(--lid-away));
-}
-
-.hb-ribbon {
-  background-color: var(--color-red);
-  opacity: calc((1 - var(--ribbon) * 1.2) * (1 - var(--lid-away)));
-}
-
-.hb-ribbon-a {
-  left: 68%;
-  width: 9%;
-  top: 0;
-  height: 100%;
-  transform: translateZ(1.5px) translateX(calc(var(--ribbon) * var(--w) * 1.2));
-}
-
-.hb-ribbon-b {
-  top: 64%;
-  height: 12%;
-  left: 0;
-  width: 100%;
-  transform: translateZ(1px) translateY(calc(var(--ribbon) * var(--d) * -1.5));
-}
-
-.hb-bow {
-  left: 72.5%;
-  top: 70%;
-  width: 0;
-  height: 0;
-  /* Scaled to nothing as it falls, not only faded: inside a 3D context
-     Chrome can still paint the loops of a zero-opacity group. */
-  transform:
-    translateZ(3px)
-    translate3d(0, calc(var(--ribbon) * var(--d) * 0.6), calc(var(--ribbon) * var(--w) * -0.15))
-    scale(max(0.001, calc(1 - var(--ribbon))));
-  opacity: calc(1 - var(--ribbon) * 1.5);
-}
-
-.hb-bow-loop,
-.hb-bow-knot {
-  position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: 50%;
-  background-color: var(--color-red);
-}
-
-.hb-bow-loop {
-  width: calc(var(--w) * 0.19);
-  height: calc(var(--w) * 0.1);
-  /* The hollow of the loop, in the shadow of the ribbon. */
-  box-sizing: border-box;
-  border: calc(var(--w) * 0.024) solid var(--color-red);
-  background-color: rgb(0 0 0 / 0);
-}
-
-.hb-bow-loop-l {
-  transform: translate(-100%, -50%) rotate(32deg);
-  transform-origin: 100% 50%;
-}
-
-.hb-bow-loop-r {
-  transform: translate(0, -50%) rotate(-32deg);
-  transform-origin: 0 50%;
-}
-
-.hb-bow-knot {
-  width: calc(var(--w) * 0.06);
-  height: calc(var(--w) * 0.06);
-  transform: translate(-50%, -50%);
-}
-
-.hb-bow-knot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-color: rgb(0 0 0 / 0.18);
-}
-
-/* --- the stage: mobile first -------------------------------------------- */
-
-.hero-stage {
-  position: relative;
-  padding-top: clamp(112px, 26vw, 140px);
-}
-
-.hero-intro,
-.hero-panel,
-.hero-scene {
-  display: none;
-}
-
-.hero-frames-list {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-
-.hero-frames-list::-webkit-scrollbar {
-  display: none;
-}
-
-.hero-frame {
-  flex: 0 0 100%;
-  scroll-snap-align: center;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  justify-items: center;
-  align-items: center;
-  height: 360px;
-  padding: 88px 20px 16px;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-m);
-  background-color: var(--color-paper);
-}
-
-.hero-frame .hb {
-  --w: min(200px, 48vw);
-}
-
-.hero-frame-caption {
-  justify-self: start;
+.hero-copy {
+  padding-top: clamp(132px, 13vw, 176px);
 }
 
 .hero-title {
-  --n: 0;
+  font-size: clamp(2.75rem, 11vw, 4.5rem);
 }
 
-.hero-line {
-  display: block;
+.hero-end-line {
+  max-width: 16ch;
+  font-size: clamp(2rem, 3.4vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
-/* Each word is its own clip. Clipping per line would leak: when a line wraps,
-   characters rising from below the top row are still inside the line box. */
-.hero-word {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: top;
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
+.hero-stage {
+  position: relative;
+  padding-block: 32px clamp(72px, 9vw, 128px);
+}
+
+.hero-visual {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+
+.hero-frame {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-poster {
+  position: absolute;
+  left: calc(var(--mx) * 100%);
+  top: calc(var(--my) * 100%);
+  width: calc(var(--mw) * 100%);
+  height: calc(var(--mh) * 100%);
+}
+
+.hero-poster-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-poster-closed,
+.hero-end,
+.hero-progress,
+.hero-cue-row {
+  display: none;
+}
+
+.hero-canvas {
+  position: absolute !important;
+  inset: 0;
+}
+
+/* The cloth tags: a pin on the cloth, a short leader, a paper label. */
+.hero-tags {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-tag {
+  position: absolute;
+  left: calc(var(--tmx) * 100%);
+  top: calc(var(--tmy) * 100%);
+  width: 0;
+  height: 0;
+}
+
+.hero-tag-pin {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-suiting);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-paper);
+}
+
+/* Below desktop the label reads to the right of its pin; on desktop, to
+   the left, out over the tissue. */
+.hero-tag-label {
+  position: absolute;
+  left: 18px;
+  top: 0;
+  display: flex;
+  gap: 8px;
+  padding: 5px 12px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-s);
+  background-color: var(--color-paper);
+  font-size: 0.875rem;
+  line-height: 1.4;
   white-space: nowrap;
+  transform: translateY(-50%);
 }
 
-.hero-char {
-  --cp: clamp(0, calc((var(--type) * (var(--n) + 12) - var(--i)) / 12), 1);
-  display: inline-block;
-  transform: translateY(calc((1 - var(--cp)) * 115%));
+.hero-tag-label::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -14px;
+  width: 13px;
+  height: 1px;
+  background-color: var(--color-suiting);
 }
 
-.hero-sub {
-  opacity: clamp(0, calc(var(--type) * 3 - 1.8), 1);
-  transform: translateY(calc((1 - var(--type)) * 14px));
-}
-
-.hero-actions {
-  opacity: clamp(0, calc(var(--type) * 3 - 2), 1);
-  transform: translateY(calc((1 - var(--type)) * 14px));
-}
-
-@media (max-width: 899.98px) {
-  /* Below 900px there is no scrubbed timeline: the copy is always set. */
-  .hero-copy {
-    --type: 1;
-    padding-top: 48px;
-    padding-bottom: clamp(80px, 10vw, 140px);
-  }
-}
-
-/* --- the stage: desktop, pinned ----------------------------------------- */
-
-@media (min-width: 900px) {
-  .hero-stage {
+@media (min-width: 900px) and (min-aspect-ratio: 5/4) {
+  .hero-pin {
     height: 100svh;
     min-height: 640px;
-    padding-top: 0;
     overflow: hidden;
   }
 
-  .hero-frames {
-    display: none;
-  }
-
-  .hero-intro {
+  .hero-copy,
+  .hero-end {
     position: absolute;
     inset: 0;
     z-index: 2;
-    display: flex;
     align-items: center;
     padding-top: 92px;
-    /* Leaves as the twill arrives to take the left two-thirds. */
-    opacity: calc(1 - var(--panel) * 5);
-  }
-
-  /* The intro and the four steps share one spot: the tagline hands over to
-     the steps as the ribbon slides off. */
-  .hero-intro-stack {
-    display: grid;
-  }
-
-  .hero-intro-stack > * {
-    grid-area: 1 / 1;
-    align-self: center;
-  }
-
-  .hero-tagline {
-    opacity: clamp(0, calc(1 - var(--ribbon) * 3), 1);
-    transform: translateY(calc(var(--ribbon) * -16px));
-  }
-
-  .hero-steps {
-    opacity: clamp(0, calc(var(--ribbon) * 3 - 0.6), 1);
-    transform: translateY(calc((1 - min(1, var(--ribbon) * 2)) * 16px));
-  }
-
-  /* Each step lights up with its own stage; its thread draws alongside. */
-  .hero-step {
-    opacity: calc(0.32 + 0.68 * var(--s));
-  }
-
-  .hero-step-thread {
-    transform: scaleX(var(--s));
-    transform-origin: 0 50%;
-  }
-
-  .hero-step:nth-child(1) {
-    --s: var(--ribbon);
-  }
-
-  .hero-step:nth-child(2) {
-    --s: var(--lid);
-  }
-
-  .hero-step:nth-child(3) {
-    --s: var(--tissue);
-  }
-
-  .hero-step:nth-child(4) {
-    --s: var(--unfold);
-  }
-
-  .hero-scene {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 2;
-    width: 50%;
-    display: grid;
-    place-items: center;
-    padding-top: 92px;
-    transform:
-      translateX(calc(var(--panel) * 8.5vw))
-      scale(calc(1 - var(--panel) * 0.3));
-  }
-
-  .hero-scene .hb {
-    --w: min(400px, 28vw);
-  }
-
-  /* The length of twill, laid flat across the left two-thirds. It starts at
-     the rectangle the standing panel occupies on screen (--px, --py, --psx,
-     --psy, measured by Hero.tsx) and scales out to fill its box. */
-  .hero-panel {
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 1;
-    display: block;
-    width: 66.667%;
-    height: 100%;
-    transform-origin: 0 0;
-    transform:
-      translate(
-        calc((1 - var(--panel)) * var(--px, 60vw)),
-        calc((1 - var(--panel)) * var(--py, 20vh))
-      )
-      scale(
-        calc(var(--psx, 0.3) + (1 - var(--psx, 0.3)) * var(--panel)),
-        calc(var(--psy, 0.4) + (1 - var(--psy, 0.4)) * var(--panel))
-      );
-    opacity: min(1, calc(var(--panel) * 6));
-  }
-
-  /* A tacking stitch down the cloth's cut edge, sewn in once the cloth has
-     settled and the headline is setting. */
-  .hero-panel::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 22px;
-    width: 2px;
-    background-image: repeating-linear-gradient(
-      180deg,
-      var(--color-thread) 0 9px,
-      transparent 9px 17px
-    );
-    opacity: clamp(0, calc(var(--type) * 2 - 0.6), 1);
-    transform: scaleY(var(--type));
-    transform-origin: 50% 0;
-  }
-
-  .hero-copy {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    display: flex;
-    align-items: center;
-    padding-top: 92px;
-    color: var(--color-shirting);
     pointer-events: none;
   }
 
-  .hero-copy a {
+  .hero-copy a,
+  .hero-end a {
     pointer-events: auto;
   }
 
+  .hero-copy {
+    display: flex;
+  }
+
   .hero-title {
-    font-size: clamp(3rem, 5.6vw, 5.75rem);
+    font-size: clamp(3rem, 5.4vw, 5.5rem);
+  }
+
+  .hero-stage {
+    position: absolute;
+    inset: 0;
+    padding: 0;
+  }
+
+  .hero-visual {
+    position: absolute;
+    inset: 0;
+    max-width: none;
+    aspect-ratio: auto;
+    margin: 0;
+  }
+
+  .hero-frame {
+    inset: 0 auto 0 70%;
+    height: 100%;
+    aspect-ratio: 16 / 10;
+    transform: translateX(-50%);
+  }
+
+  .hero-poster {
+    left: calc(var(--dx) * 100%);
+    top: calc(var(--dy) * 100%);
+    width: calc(var(--dw) * 100%);
+    height: calc(var(--dh) * 100%);
+  }
+
+  .hero-tag {
+    left: calc(var(--tx) * 100%);
+    top: calc(var(--ty) * 100%);
+  }
+
+  .hero-tag-label {
+    right: 18px;
+    left: auto;
+  }
+
+  .hero-tag-label::after {
+    right: -14px;
+    left: auto;
+  }
+
+  .hero-progress {
+    position: absolute;
+    right: 0;
+    bottom: clamp(24px, 4.5vh, 48px);
+    left: 0;
+    z-index: 2;
   }
 }
 
+/* --- the film ------------------------------------------------------------ */
+
 @media (prefers-reduced-motion: no-preference) {
-  .hero-float {
-    animation: hero-float 4s ease-in-out infinite;
+  html[data-js] .hero:not([data-mode="static"]) {
+    --end-in: 0;
+    --film: 0;
+
+    & .hero-poster-closed {
+      display: block;
+      transition: opacity 0.6s var(--ease-tailor);
+    }
+
+    & .hero-poster-open {
+      display: none;
+    }
+
+    & .hero-canvas {
+      opacity: 0;
+      transition: opacity 0.6s var(--ease-tailor);
+    }
+
+    &[data-ready] .hero-canvas {
+      opacity: 1;
+    }
+
+    &[data-ready] .hero-poster-closed {
+      opacity: 0;
+    }
+
+    & .hero-copy {
+      opacity: calc(1 - var(--copy-out));
+      transform: translateY(calc(var(--copy-out) * -16px));
+    }
+
+    & .hero-cue-row {
+      display: flex;
+    }
+
+    & .hero-end {
+      display: block;
+      opacity: var(--end-in);
+      transform: translateY(calc((1 - var(--end-in)) * 14px));
+    }
+
+    & .hero-tag {
+      --tag: clamp(0, calc(var(--end-in) * 2.2 - var(--i) * 0.45), 1);
+      opacity: var(--tag);
+      transform: translateY(calc((1 - var(--tag)) * 6px));
+    }
+
+    /* The counter arrives once the film starts and leaves as it ends. */
+    & .hero-progress {
+      display: block;
+      opacity: calc(min(1, var(--film) * 40) * (1 - var(--end-in)));
+    }
+
+    & .hero-progress-stitch {
+      transform: scaleX(var(--film));
+    }
   }
 
-  .hero[data-moving] .hero-float {
-    animation: none;
+  /* Desktop: the end copy sits where the load copy was. */
+  @media (min-width: 900px) and (min-aspect-ratio: 5/4) {
+    html[data-js] .hero:not([data-mode="static"]) .hero-end {
+      display: flex;
+    }
+  }
+
+  /* Below desktop only the square visual pins: copy, then the film. */
+  @media not all and (min-width: 900px) and (min-aspect-ratio: 5/4) {
+    html[data-js] .hero:not([data-mode="static"]) {
+      & .hero-stage {
+        display: flex;
+        height: 100svh;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        padding-block: 88px 64px;
+      }
+
+      & .hero-visual {
+        width: min(100%, 560px, 56svh);
+        flex: none;
+      }
+
+      & .hero-copy {
+        opacity: 1;
+        transform: none;
+      }
+
+      & .hero-cue-row {
+        display: none;
+      }
+
+      & .hero-end-line {
+        font-size: clamp(1.75rem, 7vw, 2.25rem);
+      }
+
+      & .hero-progress {
+        position: absolute;
+        right: 0;
+        bottom: 20px;
+        left: 0;
+      }
+    }
   }
 
   .hero-cue-dash {
     animation: hero-cue 1.2s linear infinite;
   }
+
+  .hero[data-moving] .hero-cue-dash {
+    animation: none;
+  }
+}
+
+.hero-progress-track {
+  position: relative;
+  display: block;
+  width: 168px;
+  height: 2px;
+  overflow: hidden;
+  background-color: var(--color-line);
+}
+
+.hero-progress-stitch {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--color-thread) 0 6px,
+    transparent 6px 10px
+  );
+  transform-origin: 0 50%;
 }
 
 /* The scroll cue: a dashed thread running down. One loop is exactly four
@@ -1081,16 +779,6 @@ html[data-scroll-locked="true"] body {
     var(--color-thread) 0 6px,
     transparent 6px 12px
   );
-}
-
-@keyframes hero-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-2px);
-  }
 }
 
 @keyframes hero-cue {

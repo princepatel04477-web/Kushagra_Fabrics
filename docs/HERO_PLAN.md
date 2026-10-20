@@ -1,6 +1,6 @@
 # Hero plan: the unboxing, rebuilt as a product film
 
-Date: 2026-10-20 · Branch: `draft-01` · Status: **approved: option A (WebGL), headline and CTAs visible on load. P0 passed; next is P1.**
+Date: 2026-10-20 · Branch: `draft-01` · Status: **shipped on branch `hero-webgl` (P0–P5 done, 2026-10-20). See §8 for what was built and measured.**
 
 The idea stays: you scroll and the box opens. What has to change is the
 drawing, the timing and the layout. `AGENTS.md` is still the contract; §7 lists the
@@ -179,3 +179,47 @@ Spike lives at `/hero-lab` (dev only; production answers 404, noindex) in
   its progress". Replace the "hero scrubs CSS custom properties" exception and the
   `heroTwillStyle` note. The sanctioned shadow becomes the scene's contact shadow.
 - §4 Routes: unchanged.
+
+## 8. Outcome (P1–P5, 2026-10-20)
+
+Built in `src/components/home/hero/` with the choreography in
+`src/lib/heroTimeline.ts`; the old `HeroBox.tsx` and its CSS-3D block are
+gone, and so is drei (replaced by our own PMREM light-card environment and
+three's `RoundedBoxGeometry`).
+
+**The film:** the bow pulls through and both grosgrain bands peel off into
+loose curls on the table; the lid lifts slowly (a snug lid), then is carried
+back and propped behind the box at about 24°, with its label to the camera;
+the tissue turns over the walls like a page, free edge first; the camera
+tilts down as Oxford white, Sky end-on-end and Charcoal herringbone lift
+apart; the note card ("Have it cut the way you like it.") slides out; paper
+tags name each cloth and the closing line sets ("Choose the cloth. His
+tailor does the rest.").
+
+**Changes from the plan:**
+- The cloth names are paper tags pinned to each length, not leader lines
+  across the page, so they don't collide with the copy at any width.
+- The lid is propped at about 24°, not standing upright: at 64° it filled the
+  top of the frame and ran under the nav.
+- No snap-to-end. ScrollTrigger snapping fights Lenis, and the film reads
+  well without it.
+- Pointer parallax fades out over the reveal, so the end frame matches the
+  open poster exactly and the tags can use fixed positions.
+- Mobile uses a square, full-bleed visual with a tighter lens. Phones get a
+  512 px shadow map and a pixel ratio of 1.5 or less.
+
+**Measured (production build):**
+
+| | |
+| --- | --- |
+| Home first-load JS | 226 kB (was 223 kB). three is not in it |
+| Lazy 3D chunks | about 256 KB gzipped, loaded on idle after first paint. This is 6 KB over the 250 KB target; almost all of it is three itself |
+| LCP, desktop 1440×900 | 0.48 s (the closed poster); CLS 0.001 |
+| LCP, mobile 390×844, 4× CPU, 1.6 Mbps | 1.36 s; CLS 0.005 |
+| Posters | closed desktop 60 KB, open desktop 197 KB, mobile 37 KB / 72 KB (WebP; next/image re-encodes per size) |
+| `/hero-lab` in production | 404 |
+| Keyboard | skip link → nav → Build a gift box → See the fabrics. Copy and end actions are `inert` while off screen |
+
+**Not verified:** real-device frame rate. Headless Chrome renders WebGL in
+software, so frame timing there means nothing. Check on a mid-range Android
+and an iPhone before launch.

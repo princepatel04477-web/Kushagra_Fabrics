@@ -22,6 +22,7 @@ This file is the contract for every phase. Read it before writing a component.
 | Styling      | `tailwindcss@4` + `@tailwindcss/postcss`, tokens in `@theme`  |
 | Animation    | `motion/react`, `gsap@3.13` + ScrollTrigger, `@gsap/react`    |
 | Scrolling    | `lenis` — the only smooth-scroll source                       |
+| 3D           | `three@0.186` + `@react-three/fiber@9` — the hero scene only, lazy |
 | State        | `zustand` (bag persisted)                                     |
 | Class names  | `clsx` via `src/lib/cn.ts`                                    |
 | Fonts        | `next/font/google` — Bodoni Moda (display), Cabin (body)      |
@@ -121,6 +122,7 @@ component is in the wrong place.
 | Owner                 | Owns                                                                                    |
 | --------------------- | --------------------------------------------------------------------------------------- |
 | **GSAP + ScrollTrigger** | Anything tied to scroll position: the hero unboxing (pinned, scrubbed) and the footer stitch. |
+| **three.js (R3F)**    | Rendering the hero's gift box (`home/hero/`). It owns no clock and no scroll: GSAP writes one progress value, the canvas draws on demand. |
 | **motion/react**      | Mount/unmount, gestures, layout and shared-element: drawer, menus, builder fly-in, bag badge. |
 | **React Bits**        | Exactly the one location it is assigned to. One component, one place.                     |
 | **Lenis**             | Scrolling. It is the only smooth-scroll source.                                          |
@@ -135,14 +137,24 @@ Rules:
   - The footer wordmark (`TextPressure`) animates the variable font's weight
     axis alongside `scaleY` — Bodoni Moda loads without a static weight list
     for this. Its size is capped so letters fit their cells at full weight.
-  - The hero unboxing scrubs CSS custom properties (`--ribbon`, `--lid`, …
-    `--type`) on `.hero`; the "Hero unboxing" block in `globals.css` turns them
-    into transforms and opacity only. The CSS defaults are the open end state
-    (no-JS, reduced motion); `html[data-js]` starts it closed. Mobile frames
-    set the same variables inline. The cloth is drawn in CSS (`heroTwillStyle`
-    in `HeroBox.tsx`) — never a stretched photo, which goes soft at panel
-    size. The box's soft cast shadow on its floor plane is part of the
-    drawing, the one sanctioned shadow.
+  - The hero unboxing is a WebGL scene (`home/hero/HeroScene.tsx`, loaded
+    with `next/dynamic`, `ssr: false`, after idle). A pinned ScrollTrigger
+    scrubs one progress value; `heroPose()` in `src/lib/heroTimeline.ts` is
+    the single description of every beat (ribbon, lid, tissue, cloth) and
+    the scene, copy, step counter and tags all read it. On `.hero` it is
+    mapped to `--copy-out`, `--end-in` and `--film`, which the "Hero" block
+    in `globals.css` turns into opacity and transforms only. The canvas
+    renders on demand (`frameloop="demand"`) — never an idle loop.
+  - The scene's surfaces (book-cloth board, grosgrain, the three weaves,
+    tissue creases, note card) are procedural canvas textures, and the box's
+    soft shadow on the table is part of the scene — the one sanctioned
+    shadow. No HDR or texture files are downloaded.
+  - First paint is a poster rendered from the scene (`posters.ts`,
+    `src/assets/hero/`) at the camera's exact framing, so the canvas fades in
+    over it without a jump. The open-box poster with the cloths named is the
+    whole hero for no-JS, reduced-motion, no-WebGL and ≤ 2 GB devices
+    (`data-mode="static"`). Change the scene → re-render the posters
+    (`/hero-lab?poster=1`, dev only).
 - `prefers-reduced-motion`: **every** effect has a static end state.
   `<MotionConfig reducedMotion="user">` covers motion; GSAP and Lenis are guarded
   explicitly with `useReducedMotion()` (in `SmoothScroll`, which never constructs Lenis
@@ -158,7 +170,7 @@ Rules:
   (top, or the URL's `#hash`) and re-runs `ScrollTrigger.refresh()`.
 - The preloader is server-rendered and hidden before first paint by `HEAD_SCRIPT`
   (`src/lib/headScript.ts`, `html[data-preloaded]`) on repeat visits and under reduced
-  motion. `HEAD_SCRIPT` also sets `html[data-js]`, which lets the hero start closed.
+  motion. `HEAD_SCRIPT` also sets `html[data-js]`, which switches the hero from its static open-box still to the film.
   Never import a value for a server component from a `"use client"` file — it arrives
   as a client-reference stub. The session flag
   is written when the curtain finishes — never on start, or StrictMode skips it.
@@ -254,7 +266,10 @@ them before launch. See `docs/PHOTO_SHOT_LIST.md` for the brief. Never fetch or
 hotlink stock photos to fill a gap.
 
 - Import images statically and render with `next/image` and `placeholder="blur"`
-  plus a correct `sizes`. `priority` only on a photo in the first viewport (none on `/`: the hero is drawn in CSS).
+  plus a correct `sizes`. `priority` only on a photo in the first viewport (none on `/`:
+  the hero's poster is a render, art-directed with `getImageProps` and fetched eagerly).
+- `src/assets/hero/*.webp` are renders of the hero scene, not photography. They are
+  re-rendered from the scene, never retouched or replaced with a photo.
 - Frame: `rounded-m overflow-hidden bg-paper border border-line`. Photos are never
   rotated, tilted, skewed or put in an arc.
 - Fabric photos are always 4:5 (`aspect-[4/5]`, `object-cover`). The one hover

@@ -1,22 +1,98 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Environment, Lightformer } from "@react-three/drei";
-import type { SpotLight } from "three";
+import { useThree } from "@react-three/fiber";
+import {
+  Color,
+  DoubleSide,
+  Mesh,
+  MeshBasicMaterial,
+  PlaneGeometry,
+  PMREMGenerator,
+  Scene,
+  type SpotLight,
+} from "three";
 
 /**
- * Studio light matching hero-box.jpg: a broad soft window from the top left
- * (the key), a dim card on the right (fill), and a thin strip behind (rim)
- * that lifts the navy edges off the pale page. The environment is built from
- * these light cards locally, so no HDR file is downloaded.
+ * Studio light matching hero-box.jpg.
  *
- * The key is a wide spot rather than a directional light: its penumbra
- * gives the lid the gentle fall-off of a window across a table, and it casts
+ * Reflections come from a small environment of light cards rendered once
+ * into a PMREM map: a broad soft window at the top left (the key), a dim card
+ * on the right (fill), a thin strip behind (rim) that lifts the navy edges
+ * off the pale page, and a pale floor bounce. No HDR file is downloaded.
+ *
+ * Direct light is a wide spot standing in for the same window: its penumbra
+ * gives the lid the gentle fall-off of daylight across a table, and it casts
  * the one soft shadow (VSM) onto a shadow-only floor. The canvas is
  * transparent, so the page's shirting shows through and the floor itself is
- * never drawn, only the shadow lying on it.
+ * never drawn — only the shadow lying on it.
  */
-export function Lights() {
+
+interface Card {
+  readonly color: string;
+  readonly intensity: number;
+  readonly position: readonly [number, number, number];
+  readonly size: readonly [number, number];
+}
+
+const CARDS: readonly Card[] = [
+  { color: "#fffaf4", intensity: 3.2, position: [-5, 6, 3], size: [8, 5] },
+  { color: "#e9eef6", intensity: 0.7, position: [6, 2.5, 2], size: [5, 4] },
+  { color: "#ffffff", intensity: 1.6, position: [0, 3, -6], size: [10, 0.8] },
+  { color: "#eef1f4", intensity: 0.5, position: [0, -4, 0], size: [12, 12] },
+];
+
+function StudioEnvironment() {
+  const gl = useThree((state) => state.gl);
+  const scene = useThree((state) => state.scene);
+  const invalidate = useThree((state) => state.invalidate);
+
+  useEffect(() => {
+    const studio = new Scene();
+    studio.background = new Color("#000000");
+    const disposables: Array<{ dispose: () => void }> = [];
+
+    for (const card of CARDS) {
+      const geometry = new PlaneGeometry(card.size[0], card.size[1]);
+      const material = new MeshBasicMaterial({
+        color: new Color(card.color).multiplyScalar(card.intensity),
+        side: DoubleSide,
+        toneMapped: false,
+      });
+      const mesh = new Mesh(geometry, material);
+      mesh.position.set(card.position[0], card.position[1], card.position[2]);
+      mesh.lookAt(0, 0, 0);
+      studio.add(mesh);
+      disposables.push(geometry, material);
+    }
+
+    const generator = new PMREMGenerator(gl);
+    const target = generator.fromScene(studio, 0.02);
+    scene.environment = target.texture;
+    invalidate();
+
+    return () => {
+      scene.environment = null;
+      target.dispose();
+      generator.dispose();
+      for (const item of disposables) item.dispose();
+    };
+  }, [gl, scene, invalidate]);
+
+  return null;
+}
+
+/**
+ * Phones render a smaller, cheaper shadow: half the map with half the blur
+ * radius looks the same at their size, at a quarter of the cost.
+ */
+const SHADOW = {
+  desktop: { size: 1024, radius: 28, samples: 32 },
+  mobile: { size: 512, radius: 14, samples: 12 },
+} as const;
+
+export function Lights({ quality }: { quality: keyof typeof SHADOW }) {
+  const shadow = SHADOW[quality];
   const keyRef = useRef<SpotLight | null>(null);
 
   useEffect(() => {
@@ -28,6 +104,7 @@ export function Lights() {
 
   return (
     <>
+      <StudioEnvironment />
       <ambientLight intensity={0.3} />
       <spotLight
         ref={keyRef}
@@ -36,51 +113,16 @@ export function Lights() {
         penumbra={1}
         decay={0}
         intensity={2.6}
-        color="#fffaf3"
+        color="#fffcf8"
         castShadow
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={[shadow.size, shadow.size]}
         shadow-bias={-0.0003}
         shadow-normalBias={0.015}
-        shadow-radius={28}
-        shadow-blurSamples={32}
+        shadow-radius={shadow.radius}
+        shadow-blurSamples={shadow.samples}
         shadow-camera-near={5}
         shadow-camera-far={20}
       />
-
-      <Environment resolution={256} frames={1}>
-        <Lightformer
-          form="rect"
-          intensity={3.2}
-          color="#fff8ef"
-          position={[-5, 6, 3]}
-          scale={[8, 5, 1]}
-          target={[0, 0, 0]}
-        />
-        <Lightformer
-          form="rect"
-          intensity={0.7}
-          color="#e9eef6"
-          position={[6, 2.5, 2]}
-          scale={[5, 4, 1]}
-          target={[0, 0, 0]}
-        />
-        <Lightformer
-          form="rect"
-          intensity={1.6}
-          color="#ffffff"
-          position={[0, 3, -6]}
-          scale={[10, 0.8, 1]}
-          target={[0, 0, 0]}
-        />
-        <Lightformer
-          form="rect"
-          intensity={0.5}
-          color="#eef1f4"
-          position={[0, -4, 0]}
-          rotation={[Math.PI / 2, 0, 0]}
-          scale={[12, 12, 1]}
-        />
-      </Environment>
 
       {/* The floor: invisible except for the shadow that falls on it. Kept
           inside the key's cone, or the edge of its shadow map shows. */}
